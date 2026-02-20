@@ -1,5 +1,6 @@
 import "./Home.css";
 import bannerImage from "../assets/images/banner.png";
+import { Link } from "react-router-dom";
 
 export default function Home() {
   return (
@@ -24,7 +25,9 @@ export default function Home() {
 
           <div className="nav-actions">
             <a className="btn btn-light" href="#">Login</a>
-            <a className="btn btn-dark" href="#">Register</a>
+            <Link to="/register" className="btn btn-dark">
+             Register
+             </Link>
           </div>
         </div>
       </header>
