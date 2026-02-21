@@ -1,8 +1,10 @@
+import { useNavigate, Link } from "react-router-dom";
 import "./Home.css";
 import bannerImage from "../assets/images/banner.png";
-import { Link } from "react-router-dom";
 
 export default function Home() {
+  const navigate = useNavigate();
+
   return (
     <div className="page">
       {/* Header */}
@@ -24,31 +26,46 @@ export default function Home() {
           </nav>
 
           <div className="nav-actions">
-            <a className="btn btn-light" href="#">Login</a>
+            {/* Login */}
+            <button
+              type="button"
+              className="btn btn-light"
+              onClick={() => navigate("/login")}
+            >
+              Login
+            </button>
+
+            {/* Register */}
             <Link to="/register" className="btn btn-dark">
-             Register
-             </Link>
+              Register
+            </Link>
           </div>
         </div>
       </header>
 
-      {/* Hero (Category merged inside banner) */}
+      {/* Hero Banner */}
       <section
         id="home"
         className="hero-banner"
         style={{ backgroundImage: `url(${bannerImage})` }}
       >
         <div className="banner-overlay">
-          {/* Category Bar inside hero */}
+          {/* Category Bar */}
           <div className="category-bar inside-banner">
             <div className="container category-wrapper">
-              {["Family", "Bachelor", "Office", "Sublet", "Hostel", "Shop", "New Flat"].map(
-                (item) => (
-                  <a key={item} href="#" className="category-item">
-                    {item}
-                  </a>
-                )
-              )}
+              {[
+                "Family",
+                "Bachelor",
+                "Office",
+                "Sublet",
+                "Hostel",
+                "Shop",
+                "New Flat",
+              ].map((item) => (
+                <a key={item} href="#" className="category-item">
+                  {item}
+                </a>
+              ))}
             </div>
           </div>
 
@@ -75,15 +92,18 @@ export default function Home() {
             <div className="feature">
               <h3>Smart Search</h3>
               <p className="muted">
-                Filter by area, price, rooms, and amenities to find the best match.
+                Filter by area, price, rooms, and amenities to find the best
+                match.
               </p>
             </div>
+
             <div className="feature">
               <h3>Owner Connect</h3>
               <p className="muted">
                 Contact owners directly and manage conversations easily.
               </p>
             </div>
+
             <div className="feature">
               <h3>Save Favorites</h3>
               <p className="muted">
@@ -102,19 +122,25 @@ export default function Home() {
           <div className="grid-3">
             <a className="category-card" href="#">
               <h3>Flat Rent</h3>
-              <p className="muted">Find flats by budget, rooms and amenities.</p>
+              <p className="muted">
+                Find flats by budget, rooms and amenities.
+              </p>
               <span className="browseLink">Browse →</span>
             </a>
 
             <a className="category-card" href="#">
               <h3>Hostel / Mess</h3>
-              <p className="muted">Seat-based options for students & bachelors.</p>
+              <p className="muted">
+                Seat-based options for students & bachelors.
+              </p>
               <span className="browseLink">Browse →</span>
             </a>
 
             <a className="category-card" href="#">
               <h3>For Sale</h3>
-              <p className="muted">Apartments & houses for buying with details.</p>
+              <p className="muted">
+                Apartments & houses for buying with details.
+              </p>
               <span className="browseLink">Browse →</span>
             </a>
           </div>
@@ -151,7 +177,9 @@ export default function Home() {
               <div className="step-no">3</div>
               <div>
                 <h3>Connect</h3>
-                <p className="muted">Message and finalize visit/booking quickly.</p>
+                <p className="muted">
+                  Message and finalize visit/booking quickly.
+                </p>
               </div>
             </div>
           </div>
