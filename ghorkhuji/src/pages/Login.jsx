@@ -13,14 +13,13 @@ export default function Login() {
   const [errorMsg, setErrorMsg] = useState("");
   const [touched, setTouched] = useState({ phone: false, password: false });
 
-  // already logged in hole accessible home e jabe
+  // ✅ Auto redirect if already logged in + auto-fill remembered phone
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
-      navigate("/accessible-home");
+      navigate("/"); // already logged in → go home
       return;
     }
-
     const rememberedPhone = localStorage.getItem("rememberedPhone");
     if (rememberedPhone) {
       setPhone(rememberedPhone);
@@ -57,13 +56,11 @@ export default function Login() {
 
     try {
       setLoading(true);
-
       const res = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone: phoneTrim, password: passTrim }),
       });
-
       const data = await res.json();
 
       if (!res.ok) {
@@ -71,17 +68,16 @@ export default function Login() {
         return;
       }
 
-      // user save korbe always, na hole login thakbe na
-      localStorage.setItem("user", JSON.stringify(data.user || data));
-
-      // remember me only phone save/remove korbe
+      // ✅ Remember logic
       if (remember) {
+        localStorage.setItem("user", JSON.stringify(data.user || data));
         localStorage.setItem("rememberedPhone", phoneTrim);
       } else {
+        localStorage.removeItem("user");
         localStorage.removeItem("rememberedPhone");
       }
 
-      navigate("/accessible-home");
+      navigate("/");
     } catch (err) {
       console.log(err);
       setErrorMsg("Server not reachable / Network error");
@@ -120,6 +116,7 @@ export default function Login() {
           boxShadow: "0 18px 40px rgba(0,0,0,0.25)",
         }}
       >
+        {/* Top */}
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <div
             style={{
@@ -145,6 +142,7 @@ export default function Login() {
           </div>
         </div>
 
+        {/* Inline error */}
         {errorMsg ? (
           <div
             style={{
@@ -163,10 +161,10 @@ export default function Login() {
         ) : null}
 
         <form onSubmit={handleLogin} style={{ marginTop: 18 }}>
+          {/* Phone */}
           <label style={{ display: "block", fontWeight: 600, color: "#0f172a" }}>
             Phone No <span style={{ color: "#ef4444" }}>*</span>
           </label>
-
           <div style={{ display: "flex", gap: 10, marginTop: 8, alignItems: "center" }}>
             <div
               style={{
@@ -184,7 +182,6 @@ export default function Login() {
             >
               +880
             </div>
-
             <input
               ref={phoneRef}
               autoFocus
@@ -202,18 +199,17 @@ export default function Login() {
               style={inputStyle(Boolean(phoneError))}
             />
           </div>
-
           {phoneError ? (
             <div style={{ marginTop: 6, color: "#ef4444", fontSize: 12, fontWeight: 700 }}>
               {phoneError}
             </div>
           ) : null}
 
+          {/* Password */}
           <div style={{ marginTop: 14 }}>
             <label style={{ display: "block", fontWeight: 600, color: "#0f172a" }}>
               Password <span style={{ color: "#ef4444" }}>*</span>
             </label>
-
             <div style={{ position: "relative", marginTop: 8 }}>
               <input
                 ref={passRef}
@@ -224,7 +220,6 @@ export default function Login() {
                 onBlur={() => setTouched((t) => ({ ...t, password: true }))}
                 style={{ ...inputStyle(Boolean(passError)), paddingRight: 64 }}
               />
-
               <button
                 type="button"
                 onClick={() => setShowPass((s) => !s)}
@@ -243,7 +238,6 @@ export default function Login() {
                 {showPass ? "Hide" : "Show"}
               </button>
             </div>
-
             {passError ? (
               <div style={{ marginTop: 6, color: "#ef4444", fontSize: 12, fontWeight: 700 }}>
                 {passError}
@@ -251,6 +245,7 @@ export default function Login() {
             ) : null}
           </div>
 
+          {/* Remember me */}
           <div
             style={{
               marginTop: 12,
