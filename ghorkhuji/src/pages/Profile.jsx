@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import "./Profile.css";
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -6,19 +7,48 @@ export default function Profile() {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
-    navigate("/login");
+    navigate("/"); // Logout করলে Home এ যাবে
   };
 
   return (
-    <div style={{ padding: "40px" }}>
-      <h1>My Profile</h1>
-      <p><strong>Name:</strong> {user?.name || "User"}</p>
-      <p><strong>Phone:</strong> {user?.phone}</p>
+    <div className="profile-page">
+      <div className="profile-overlay"></div>
 
-      <button onClick={() => navigate("/accessible-home")}>Back to Home</button>
-      <button onClick={handleLogout} style={{ marginLeft: "10px" }}>
-        Logout
-      </button>
+      <div className="profile-card">
+        <div className="profile-header">
+          <div className="profile-avatar">👤</div>
+
+          <div className="profile-header-text">
+            <h1>My Profile</h1>
+            <p>Your account information</p>
+          </div>
+        </div>
+
+        <div className="profile-info">
+          <div className="info-box">
+            <span className="info-label">Name</span>
+            <span className="info-value">{user?.name || "User"}</span>
+          </div>
+
+          <div className="info-box">
+            <span className="info-label">Phone</span>
+            <span className="info-value">{user?.phone || "Not added"}</span>
+          </div>
+        </div>
+
+        <div className="profile-actions">
+          <button
+            className="profile-btn secondary-btn"
+            onClick={() => navigate("/accessible-home")}
+          >
+            Back to Home
+          </button>
+
+          <button className="profile-btn primary-btn" onClick={handleLogout}>
+            Logout
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

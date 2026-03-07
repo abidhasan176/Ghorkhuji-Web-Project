@@ -60,6 +60,7 @@ button {
   position: sticky;
   top: 0;
   z-index: 50;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
 }
 
 .nav {
@@ -74,6 +75,7 @@ button {
   display: flex;
   align-items: center;
   gap: 14px;
+  min-width: 0;
 }
 
 .logo {
@@ -85,6 +87,7 @@ button {
   place-items: center;
   font-size: 36px;
   color: white;
+  flex-shrink: 0;
 }
 
 .brand-text h1 {
@@ -110,11 +113,48 @@ button {
 .menu a {
   color: #cbd5e1;
   font-weight: 500;
+  transition: 0.2s ease;
+}
+
+.menu a:hover {
+  color: #ffffff;
 }
 
 .nav-actions {
   display: flex;
   align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-left: auto;
+}
+
+.top-action-btn {
+  min-height: 46px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: 0.25s ease;
+}
+
+.top-action-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.top-action-icon {
+  font-size: 18px;
+  line-height: 1;
 }
 
 .iconBtn {
@@ -125,6 +165,14 @@ button {
   background: #ffffff;
   font-size: 22px;
   cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: 0.25s ease;
+  flex-shrink: 0;
+}
+
+.iconBtn:hover {
+  transform: scale(1.05);
 }
 
 .hero-banner {
@@ -273,6 +321,23 @@ button {
   font-size: 13px;
 }
 
+@media (max-width: 1100px) {
+  .nav {
+    justify-content: center;
+  }
+
+  .brand {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .nav-actions {
+    width: 100%;
+    justify-content: center;
+    margin-left: 0;
+  }
+}
+
 @media (max-width: 900px) {
   .menu {
     display: none;
@@ -295,11 +360,35 @@ button {
   .banner-content h2 {
     font-size: 40px;
   }
+
+  .nav-actions {
+    gap: 10px;
+  }
+
+  .top-action-btn {
+    min-height: 44px;
+    padding: 0 16px;
+    font-size: 13px;
+  }
 }
 
 @media (max-width: 600px) {
   .container {
     width: 94%;
+  }
+
+  .header {
+    padding: 14px 0;
+  }
+
+  .nav {
+    gap: 14px;
+  }
+
+  .brand {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 12px;
   }
 
   .logo {
@@ -312,6 +401,43 @@ button {
     font-size: 18px;
   }
 
+  .brand-text p {
+    font-size: 12px;
+  }
+
+  .nav-actions {
+    width: 100%;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .top-action-btn {
+    flex: 1 1 calc(50% - 8px);
+    min-width: 140px;
+    padding: 12px 14px;
+    font-size: 13px;
+  }
+
+  .iconBtn {
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+  }
+
+  .category-wrapper {
+    gap: 12px;
+  }
+
+  .category-item {
+    padding: 10px 18px;
+    font-size: 13px;
+  }
+
+  .banner-content {
+    padding-top: 72px;
+    max-width: 92%;
+  }
+
   .banner-content h2 {
     font-size: 30px;
   }
@@ -322,5 +448,29 @@ button {
 
   .section-title {
     font-size: 26px;
+  }
+}
+
+@media (max-width: 420px) {
+  .nav-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .top-action-btn {
+    width: 100%;
+    flex: 1 1 100%;
+  }
+
+  .iconBtn {
+    align-self: flex-end;
+  }
+
+  .banner-content h2 {
+    font-size: 26px;
+  }
+
+  .banner-content p {
+    font-size: 14px;
   }
 }

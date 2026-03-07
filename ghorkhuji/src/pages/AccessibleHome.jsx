@@ -50,6 +50,22 @@ export default function AccessibleHome() {
           </nav>
 
           <div className="nav-actions">
+            <button
+              className="top-action-btn"
+              onClick={() => navigate("/add-property")}
+            >
+              <span className="top-action-icon">＋</span>
+              <span>Add Property</span>
+            </button>
+
+            <button
+              className="top-action-btn"
+              onClick={() => navigate("/order-home")}
+            >
+              <span className="top-action-icon">⌂</span>
+              <span>Order Home</span>
+            </button>
+
             <button className="iconBtn" onClick={() => navigate("/profile")}>
               👤
             </button>
