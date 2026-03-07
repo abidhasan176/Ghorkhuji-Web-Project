@@ -13,7 +13,7 @@ export default function Profile() {
     <div style={{ padding: "40px" }}>
       <h1>My Profile</h1>
       <p><strong>Name:</strong> {user?.name || "User"}</p>
-      <p><strong>Email:</strong> {user?.email || "No email"}</p>
+      <p><strong>Phone:</strong> {user?.phone}</p>
 
       <button onClick={() => navigate("/accessible-home")}>Back to Home</button>
       <button onClick={handleLogout} style={{ marginLeft: "10px" }}>

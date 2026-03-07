@@ -7,34 +7,36 @@ import authRoutes from "./routes/authRoutes.js";
 dotenv.config();
 
 const app = express();
+const PORT = process.env.PORT || 5000;
 
+// Middleware
 app.use(express.json());
 
 app.use(
   cors({
     origin: "http://localhost:5173",
+    credentials: true,
   })
 );
 
+// Test route
 app.get("/", (req, res) => {
   res.send("API running ✅");
 });
 
+// Auth routes
 app.use("/api/auth", authRoutes);
 
-const PORT = process.env.PORT || 5000;
-
-// 🔥 MongoDB connect
+// MongoDB connection
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("✅ MongoDB connected");
 
-    // Server start only after DB connect
     app.listen(PORT, () => {
-      console.log(`✅ Server running on http://localhost:${PORT}`);
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
     });
   })
   .catch((err) => {
-    console.log("❌ Mongo error:", err.message);
+    console.log("❌ MongoDB connection error:", err.message);
   });
