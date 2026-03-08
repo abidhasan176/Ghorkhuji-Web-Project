@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment files (IMPORTANT - do not push secrets)
+.env
+.env.*
+server/.env
+ghorkhuji/server/.env

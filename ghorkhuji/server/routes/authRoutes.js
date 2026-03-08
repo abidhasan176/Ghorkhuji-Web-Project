@@ -1,9 +1,9 @@
 import express from "express";
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
+import passport from "passport";
 
 const router = express.Router();
-
 
 // ================= REGISTER =================
 router.post("/register", async (req, res) => {
@@ -16,13 +16,12 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ message: "name, phone, password required" });
     }
 
-    // phone duplicate check
     const exist = await User.findOne({ phone: phone.trim() });
+
     if (exist) {
       return res.status(409).json({ message: "Phone already registered" });
     }
 
-    // 🔐 password hash
     const hashedPassword = await bcrypt.hash(password.trim(), 10);
 
     const user = await User.create({
@@ -31,6 +30,7 @@ router.post("/register", async (req, res) => {
       phone: phone.trim(),
       password: hashedPassword,
       referral: referral?.trim() || "",
+      provider: "local",
     });
 
     return res.status(201).json({
@@ -47,7 +47,6 @@ router.post("/register", async (req, res) => {
   }
 });
 
-
 // ================= LOGIN =================
 router.post("/login", async (req, res) => {
   try {
@@ -63,7 +62,12 @@ router.post("/login", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // 🔐 password compare
+    if (!user.password) {
+      return res.status(400).json({
+        message: "This account was created with Google. Please continue with Google.",
+      });
+    }
+
     const isMatch = await bcrypt.compare(password.trim(), user.password);
 
     if (!isMatch) {
@@ -76,13 +80,31 @@ router.post("/login", async (req, res) => {
         id: user._id,
         name: user.name,
         phone: user.phone,
+        email: user.email,
+        provider: user.provider,
+        avatar: user.avatar,
       },
     });
-
   } catch (err) {
     console.log("❌ Login error:", err);
-    res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: "Server error" });
   }
 });
+
+// ================= GOOGLE AUTH =================
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+router.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "http://localhost:5173/login",
+  }),
+  (req, res) => {
+    res.redirect("http://localhost:5173/accessible-home");
+  }
+);
 
 export default router;
