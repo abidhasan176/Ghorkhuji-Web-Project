@@ -26,16 +26,13 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 
-// server আগে start হবে
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
-
-// DB পরে connect করার চেষ্টা করবে
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("✅ MongoDB connected");
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
+    });
   })
   .catch((err) => {
     console.log("❌ MongoDB connection error:", err.message);
