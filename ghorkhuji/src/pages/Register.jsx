@@ -1,8 +1,11 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./register.css";
+import { saveAuth } from "../utils/auth";
 
 export default function Register() {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     name: "",
     countryCode: "+880",
@@ -22,7 +25,6 @@ export default function Register() {
   async function onSubmit(e) {
     e.preventDefault();
 
-    // basic validation
     if (!form.name.trim()) return alert("Full Name is required");
     if (!form.phone.trim()) return alert("Phone No is required");
     if (!form.password.trim()) return alert("Password is required");
@@ -37,22 +39,14 @@ export default function Register() {
 
       const data = await res.json();
 
-      // ✅ backend message দেখাবে
       if (!res.ok) {
         alert(data.message || "Registration failed");
         return;
       }
 
+      saveAuth(data.token, data.user);
       alert(data.message || "Registered ✅");
-
-      // form reset
-      setForm({
-        name: "",
-        countryCode: "+880",
-        phone: "",
-        password: "",
-        referral: "",
-      });
+      navigate("/accessible-home");
     } catch (err) {
       console.error(err);
       alert("Server not reachable / Network error");
@@ -67,7 +61,6 @@ export default function Register() {
         <h1 className="authTitle">Register</h1>
 
         <form onSubmit={onSubmit} className="authForm">
-          {/* Full Name */}
           <label className="label">
             Full Name <span className="req">*</span>
           </label>
@@ -78,7 +71,6 @@ export default function Register() {
             onChange={onChange}
           />
 
-          {/* Phone */}
           <label className="label">
             Phone No <span className="req">*</span>
           </label>
@@ -101,7 +93,6 @@ export default function Register() {
             />
           </div>
 
-          {/* Password */}
           <label className="label">
             Password <span className="req">*</span>
           </label>
@@ -122,7 +113,6 @@ export default function Register() {
             </button>
           </div>
 
-          {/* Referral */}
           <label className="label">Referral Code (Optional)</label>
           <input
             className="input"

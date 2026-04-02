@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { saveAuth, getToken } from "../utils/auth";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -14,10 +15,9 @@ export default function Login() {
   const [errorMsg, setErrorMsg] = useState("");
   const [touched, setTouched] = useState({ phone: false, password: false });
 
-  // already logged in হলে accessible-home এ যাবে
   useEffect(() => {
-    const savedUser = localStorage.getItem("user");
-    if (savedUser) {
+    const token = getToken();
+    if (token) {
       navigate("/accessible-home");
       return;
     }
@@ -70,28 +70,27 @@ export default function Login() {
         })
       });
 
+      console.log("Raw response:", res);
+
       const data = await res.json();
+      console.log("LOGIN RESPONSE DATA =", data);
 
       if (!res.ok) {
         setErrorMsg(data?.message || "Login failed");
         return;
       }
 
-      // user save
-      localStorage.setItem("user", JSON.stringify(data.user));
+      saveAuth(data.token, data.user);
 
-      // remember phone
       if (remember) {
         localStorage.setItem("rememberedPhone", phoneTrim);
       } else {
         localStorage.removeItem("rememberedPhone");
       }
 
-      // redirect
       navigate("/accessible-home");
-
     } catch (err) {
-      console.log(err);
+      console.log("LOGIN ERROR:", err);
       setErrorMsg("Server not reachable / Network error");
     } finally {
       setLoading(false);
@@ -189,6 +188,17 @@ export default function Login() {
             </div>
 
             {passError && <div style={{ color: "red" }}>{passError}</div>}
+          </div>
+
+          <div style={{ marginTop: 12 }}>
+            <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <input
+                type="checkbox"
+                checked={remember}
+                onChange={(e) => setRemember(e.target.checked)}
+              />
+              Remember phone
+            </label>
           </div>
 
           <button

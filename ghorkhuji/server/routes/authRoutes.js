@@ -1,28 +1,29 @@
 import express from "express";
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
+const createToken = (userId) => {
+  return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
+};
 
-// ================= REGISTER =================
+// REGISTER
 router.post("/register", async (req, res) => {
   try {
-    console.log("🔥 BACKEND HIT:", req.body);
-
     const { name, countryCode, phone, password, referral } = req.body;
 
     if (!name?.trim() || !phone?.trim() || !password?.trim()) {
       return res.status(400).json({ message: "name, phone, password required" });
     }
 
-    // phone duplicate check
     const exist = await User.findOne({ phone: phone.trim() });
     if (exist) {
       return res.status(409).json({ message: "Phone already registered" });
     }
 
-    // 🔐 password hash
     const hashedPassword = await bcrypt.hash(password.trim(), 10);
 
     const user = await User.create({
@@ -33,8 +34,11 @@ router.post("/register", async (req, res) => {
       referral: referral?.trim() || "",
     });
 
+    const token = createToken(user._id);
+
     return res.status(201).json({
       message: "User registered successfully ✅",
+      token,
       user: {
         id: user._id,
         name: user.name,
@@ -42,15 +46,16 @@ router.post("/register", async (req, res) => {
       },
     });
   } catch (err) {
-    console.log("❌ Register error:", err);
+    console.log("Register error:", err);
     return res.status(500).json({ message: "Server error" });
   }
 });
 
-
-// ================= LOGIN =================
+// LOGIN
 router.post("/login", async (req, res) => {
   try {
+    console.log("LOGIN ROUTE HIT");
+
     const { phone, password } = req.body;
 
     if (!phone?.trim() || !password?.trim()) {
@@ -63,25 +68,45 @@ router.post("/login", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // 🔐 password compare
     const isMatch = await bcrypt.compare(password.trim(), user.password);
 
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid password" });
     }
 
+    const token = createToken(user._id);
+    console.log("TOKEN GENERATED =", token);
+
     return res.json({
-      message: "Login successful ✅",
+      message: "Login successful",
+      token,
       user: {
         id: user._id,
         name: user.name,
         phone: user.phone,
       },
     });
-
   } catch (err) {
-    console.log("❌ Login error:", err);
-    res.status(500).json({ message: "Server error" });
+    console.log("Login error:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+});
+
+// PROTECTED PROFILE
+router.get("/me", authMiddleware, async (req, res) => {
+  try {
+    return res.json({
+      user: {
+        id: req.user._id,
+        name: req.user.name,
+        phone: req.user.phone,
+        countryCode: req.user.countryCode,
+        referral: req.user.referral,
+      },
+    });
+  } catch (err) {
+    console.log("/me error:", err);
+    return res.status(500).json({ message: "Server error" });
   }
 });
 
