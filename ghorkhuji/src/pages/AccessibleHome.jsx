@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./accessibleHome.css";
+import { clearAuth, getToken } from "../utils/auth";
 
 const categories = ["Family", "Bachelor", "Office", "Sublet", "Hostel", "Shop"];
 
@@ -30,6 +32,18 @@ const properties = [
 export default function AccessibleHome() {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const token = getToken();
+    if (!token) {
+      navigate("/login");
+    }
+  }, [navigate]);
+
+  const handleLogout = () => {
+    clearAuth();
+    navigate("/login");
+  };
+
   return (
     <div className="page">
       <header className="header">
@@ -49,25 +63,12 @@ export default function AccessibleHome() {
             <a href="#footer">Contact</a>
           </nav>
 
-          <div className="nav-actions">
-            <button
-              className="top-action-btn"
-              onClick={() => navigate("/add-property")}
-            >
-              <span className="top-action-icon">＋</span>
-              <span>Add Property</span>
-            </button>
-
-            <button
-              className="top-action-btn"
-              onClick={() => navigate("/order-home")}
-            >
-              <span className="top-action-icon">⌂</span>
-              <span>Order Home</span>
-            </button>
-
+          <div className="nav-actions" style={{ display: "flex", gap: "10px" }}>
             <button className="iconBtn" onClick={() => navigate("/profile")}>
               👤
+            </button>
+            <button className="btn btn-dark" onClick={handleLogout}>
+              Logout
             </button>
           </div>
         </div>

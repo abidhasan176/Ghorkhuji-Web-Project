@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { saveAuth, getToken } from "../utils/auth";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -15,8 +16,8 @@ export default function Login() {
   const [touched, setTouched] = useState({ phone: false, password: false });
 
   useEffect(() => {
-    const savedUser = localStorage.getItem("user");
-    if (savedUser) {
+    const token = getToken();
+    if (token) {
       navigate("/accessible-home");
       return;
     }
@@ -69,14 +70,17 @@ export default function Login() {
         }),
       });
 
+      console.log("Raw response:", res);
+
       const data = await res.json();
+      console.log("LOGIN RESPONSE DATA =", data);
 
       if (!res.ok) {
         setErrorMsg(data?.message || "Login failed");
         return;
       }
 
-      localStorage.setItem("user", JSON.stringify(data.user));
+      saveAuth(data.token, data.user);
 
       if (remember) {
         localStorage.setItem("rememberedPhone", phoneTrim);
@@ -86,7 +90,7 @@ export default function Login() {
 
       navigate("/accessible-home");
     } catch (err) {
-      console.log(err);
+      console.log("LOGIN ERROR:", err);
       setErrorMsg("Server not reachable / Network error");
     } finally {
       setLoading(false);
@@ -310,21 +314,13 @@ export default function Login() {
               </div>
             )}
 
-            <div
-              style={{
-                marginTop: 14,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: 10,
-              }}
-            >
+            <div style={{ marginTop: 12 }}>
               <label
                 style={{
                   display: "flex",
                   alignItems: "center",
                   gap: 8,
-                  color: "#c9d1d9",
+                  color: "#e6edf3",
                   fontSize: 14,
                 }}
               >
@@ -335,17 +331,6 @@ export default function Login() {
                 />
                 Remember phone
               </label>
-
-              <Link
-                to="/forgot-password"
-                style={{
-                  color: "#58a6ff",
-                  textDecoration: "none",
-                  fontSize: 14,
-                }}
-              >
-                Forgot password?
-              </Link>
             </div>
 
             <button
@@ -355,35 +340,35 @@ export default function Login() {
                 marginTop: 18,
                 width: "100%",
                 height: 46,
-                border: "none",
                 borderRadius: 10,
-                background: loading ? "#4b5563" : "#238636",
+                border: "none",
+                background: "#1f6feb",
                 color: "white",
                 fontSize: 15,
-                fontWeight: 700,
-                cursor: loading ? "not-allowed" : "pointer",
+                fontWeight: 600,
+                cursor: "pointer",
               }}
             >
               {loading ? "Logging in..." : "Login"}
             </button>
-          </form>
 
-          <div
-            style={{
-              marginTop: 18,
-              textAlign: "center",
-              color: "#8b949e",
-              fontSize: 14,
-            }}
-          >
-            Don&apos;t have an account?{" "}
-            <Link
-              to="/register"
-              style={{ color: "#58a6ff", textDecoration: "none" }}
+            <div
+              style={{
+                marginTop: 18,
+                textAlign: "center",
+                color: "#8b949e",
+                fontSize: 14,
+              }}
             >
-              Register
-            </Link>
-          </div>
+              Don&apos;t have an account?{" "}
+              <Link
+                to="/register"
+                style={{ color: "#58a6ff", textDecoration: "none" }}
+              >
+                Register
+              </Link>
+            </div>
+          </form>
         </div>
       </div>
     </div>
