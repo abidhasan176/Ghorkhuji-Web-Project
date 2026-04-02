@@ -93,10 +93,6 @@ export default function Login() {
     }
   };
 
-  const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:5000/api/auth/google";
-  };
-
   const inputStyle = (bad) => ({
     width: "100%",
     height: 46,
@@ -183,7 +179,7 @@ export default function Login() {
               letterSpacing: "-0.4px",
             }}
           >
-            Sign in to GhorKhuji
+            Login to GhorKhuji
           </h1>
         </div>
 
@@ -261,213 +257,133 @@ export default function Login() {
               </div>
             )}
 
-            <div style={{ marginTop: 18 }}>
-              <div
+            <label
+              style={{
+                display: "block",
+                marginTop: 16,
+                marginBottom: 8,
+                color: "#f0f6fc",
+                fontSize: 14,
+                fontWeight: 600,
+              }}
+            >
+              Password
+            </label>
+
+            <div style={{ position: "relative" }}>
+              <input
+                ref={passRef}
+                type={showPass ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onBlur={() => setTouched((p) => ({ ...p, password: true }))}
+                placeholder="Enter password"
                 style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: 8,
+                  ...inputStyle(Boolean(passError)),
+                  paddingRight: 82,
+                }}
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPass((p) => !p)}
+                style={{
+                  position: "absolute",
+                  right: 8,
+                  top: 6,
+                  height: 34,
+                  padding: "0 12px",
+                  borderRadius: 8,
+                  border: "1px solid #30363d",
+                  background: "#0d1117",
+                  color: "#e6edf3",
+                  cursor: "pointer",
                 }}
               >
-                <label
-                  style={{
-                    color: "#f0f6fc",
-                    fontSize: 14,
-                    fontWeight: 600,
-                  }}
-                >
-                  Password
-                </label>
-
-                <span
-                  style={{
-                    color: "#58a6ff",
-                    fontSize: 13,
-                    cursor: "pointer",
-                    fontWeight: 500,
-                  }}
-                >
-                  Forgot password?
-                </span>
-              </div>
-
-              <div style={{ position: "relative" }}>
-                <input
-                  ref={passRef}
-                  type={showPass ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  onBlur={() => setTouched((p) => ({ ...p, password: true }))}
-                  placeholder="Enter password"
-                  style={{ ...inputStyle(Boolean(passError)), paddingRight: 70 }}
-                />
-
-                <button
-                  type="button"
-                  onClick={() => setShowPass(!showPass)}
-                  style={{
-                    position: "absolute",
-                    right: 12,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    border: "none",
-                    background: "transparent",
-                    color: "#58a6ff",
-                    cursor: "pointer",
-                    fontSize: 13,
-                    fontWeight: 600,
-                  }}
-                >
-                  {showPass ? "Hide" : "Show"}
-                </button>
-              </div>
-
-              {passError && (
-                <div style={{ color: "#ff7b72", marginTop: 6, fontSize: 13 }}>
-                  {passError}
-                </div>
-              )}
+                {showPass ? "Hide" : "Show"}
+              </button>
             </div>
+
+            {passError && (
+              <div style={{ color: "#ff7b72", marginTop: 6, fontSize: 13 }}>
+                {passError}
+              </div>
+            )}
 
             <div
               style={{
-                marginTop: 16,
+                marginTop: 14,
                 display: "flex",
                 alignItems: "center",
+                justifyContent: "space-between",
                 gap: 10,
               }}
             >
-              <input
-                id="remember"
-                type="checkbox"
-                checked={remember}
-                onChange={() => setRemember(!remember)}
-                style={{
-                  width: 16,
-                  height: 16,
-                  cursor: "pointer",
-                  margin: 0,
-                }}
-              />
               <label
-                htmlFor="remember"
                 style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
                   color: "#c9d1d9",
                   fontSize: 14,
-                  cursor: "pointer",
-                  lineHeight: 1.3,
                 }}
               >
-                Remember this phone number
+                <input
+                  type="checkbox"
+                  checked={remember}
+                  onChange={(e) => setRemember(e.target.checked)}
+                />
+                Remember phone
               </label>
+
+              <Link
+                to="/forgot-password"
+                style={{
+                  color: "#58a6ff",
+                  textDecoration: "none",
+                  fontSize: 14,
+                }}
+              >
+                Forgot password?
+              </Link>
             </div>
 
             <button
               type="submit"
               disabled={loading}
               style={{
-                marginTop: 20,
+                marginTop: 18,
                 width: "100%",
-                height: 48,
-                borderRadius: 10,
+                height: 46,
                 border: "none",
-                background: "#238636",
-                color: "#ffffff",
-                fontWeight: 700,
-                fontSize: 16,
-                cursor: "pointer",
-                boxShadow: "0 8px 20px rgba(35,134,54,0.28)",
-              }}
-            >
-              {loading ? "Signing in..." : "Sign in"}
-            </button>
-
-            <div
-              style={{
-                margin: "18px 0 16px",
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                color: "#8b949e",
-                fontSize: 13,
-              }}
-            >
-              <div style={{ flex: 1, height: 1, background: "#30363d" }} />
-              <span>or</span>
-              <div style={{ flex: 1, height: 1, background: "#30363d" }} />
-            </div>
-
-            <button
-              type="button"
-              onClick={handleGoogleLogin}
-              style={{
-                width: "100%",
-                height: 48,
                 borderRadius: 10,
-                border: "1px solid #d0d7de",
-                background: "#ffffff",
-                color: "#24292f",
-                fontWeight: 600,
-                fontSize: 14,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 10,
+                background: loading ? "#4b5563" : "#238636",
+                color: "white",
+                fontSize: 15,
+                fontWeight: 700,
+                cursor: loading ? "not-allowed" : "pointer",
               }}
             >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 48 48"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fill="#FFC107"
-                  d="M43.611 20.083H42V20H24v8h11.303C33.654 32.657 29.227 36 24 36c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.841 1.154 7.959 3.041l5.657-5.657C34.046 6.053 29.27 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"
-                />
-                <path
-                  fill="#FF3D00"
-                  d="M6.306 14.691l6.571 4.819C14.655 16.108 18.961 13 24 13c3.059 0 5.841 1.154 7.959 3.041l5.657-5.657C34.046 6.053 29.27 4 24 4c-7.682 0-14.347 4.337-17.694 10.691z"
-                />
-                <path
-                  fill="#4CAF50"
-                  d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.143 35.091 26.715 36 24 36c-5.205 0-9.617-3.316-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"
-                />
-                <path
-                  fill="#1976D2"
-                  d="M43.611 20.083H42V20H24v8h11.303c-.793 2.236-2.231 4.166-4.084 5.57l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"
-                />
-              </svg>
-              Continue with Google
+              {loading ? "Logging in..." : "Login"}
             </button>
           </form>
-        </div>
 
-        <div
-          style={{
-            marginTop: 16,
-            padding: "15px 16px",
-            border: "1px solid #30363d",
-            borderRadius: 16,
-            textAlign: "center",
-            background: "#161b22",
-            color: "#c9d1d9",
-            fontSize: 15,
-          }}
-        >
-          Don&apos;t have an account?{" "}
-          <Link
-            to="/register"
+          <div
             style={{
-              color: "#58a6ff",
-              textDecoration: "none",
-              fontWeight: 600,
+              marginTop: 18,
+              textAlign: "center",
+              color: "#8b949e",
+              fontSize: 14,
             }}
           >
-            Register
-          </Link>
+            Don&apos;t have an account?{" "}
+            <Link
+              to="/register"
+              style={{ color: "#58a6ff", textDecoration: "none" }}
+            >
+              Register
+            </Link>
+          </div>
         </div>
       </div>
     </div>

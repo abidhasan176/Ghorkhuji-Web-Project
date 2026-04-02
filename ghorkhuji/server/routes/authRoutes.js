@@ -1,7 +1,6 @@
 import express from "express";
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
-import passport from "passport";
 
 const router = express.Router();
 
@@ -63,9 +62,7 @@ router.post("/login", async (req, res) => {
     }
 
     if (!user.password) {
-      return res.status(400).json({
-        message: "This account was created with Google. Please continue with Google.",
-      });
+      return res.status(400).json({ message: "This account has no password set" });
     }
 
     const isMatch = await bcrypt.compare(password.trim(), user.password);
@@ -90,21 +87,5 @@ router.post("/login", async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 });
-
-// ================= GOOGLE AUTH =================
-router.get(
-  "/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
-
-router.get(
-  "/google/callback",
-  passport.authenticate("google", {
-    failureRedirect: "http://localhost:5173/login",
-  }),
-  (req, res) => {
-    res.redirect("http://localhost:5173/accessible-home");
-  }
-);
 
 export default router;
