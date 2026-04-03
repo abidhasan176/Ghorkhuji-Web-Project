@@ -6,6 +6,7 @@ import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
+// Create token function
 const createToken = (userId) => {
   return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
 };
@@ -38,9 +39,24 @@ router.post("/register", async (req, res) => {
 
     const token = createToken(user._id);
 
+    // Save token in httpOnly cookie (secure, not readable by JS)
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    // JS-readable auth flag cookie (for ProtectedRoute / getToken)
+    res.cookie("auth", "true", {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
     return res.status(201).json({
       message: "User registered successfully ✅",
-      token,
       user: {
         id: user._id,
         name: user.name,
@@ -56,8 +72,6 @@ router.post("/register", async (req, res) => {
 // LOGIN
 router.post("/login", async (req, res) => {
   try {
-    console.log("LOGIN ROUTE HIT");
-
     const { phone, password } = req.body;
 
     if (!phone?.trim() || !password?.trim()) {
@@ -77,11 +91,25 @@ router.post("/login", async (req, res) => {
     }
 
     const token = createToken(user._id);
-    console.log("TOKEN GENERATED =", token);
+
+    // Save token in httpOnly cookie (secure, not readable by JS)
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    // JS-readable auth flag cookie (for ProtectedRoute / getToken)
+    res.cookie("auth", "true", {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
     return res.json({
       message: "Login successful",
-      token,
       user: {
         id: user._id,
         name: user.name,
@@ -113,6 +141,23 @@ router.get("/me", authMiddleware, async (req, res) => {
     console.log("/me error:", err);
     return res.status(500).json({ message: "Server error" });
   }
+});
+
+// LOGOUT — server must clear httpOnly cookies, JS cannot
+router.post("/logout", (req, res) => {
+  res.cookie("token", "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "Lax",
+    maxAge: 0,
+  });
+  res.cookie("auth", "", {
+    httpOnly: false,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "Lax",
+    maxAge: 0,
+  });
+  return res.status(200).json({ message: "Logged out successfully" });
 });
 
 export default router;
