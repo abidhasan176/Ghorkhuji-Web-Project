@@ -19,6 +19,7 @@ export default function AddProperty() {
     includesServant: false, includesNet: false,
   });
 
+  const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", ok: true });
 
@@ -30,17 +31,42 @@ export default function AddProperty() {
     }));
   };
 
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    // Add new images to the existing ones (Max 5 allowed)
+    if (images.length + files.length > 5) {
+      alert("You can upload a maximum of 5 images.");
+      return;
+    }
+    setImages((prev) => [...prev, ...files]);
+  };
+
+  const removeImage = (index) => {
+    setImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage({ text: "", ok: true });
 
+    // FormData তৈরি করা হচ্ছে কারণ ছবির ফাইল শুধু JSON-এ পাঠানো যায় না
+    const formData = new FormData();
+    Object.keys(form).forEach((key) => {
+      formData.append(key, form[key]);
+    });
+    
+    // Multiple Images Append করা হচ্ছে
+    images.forEach((image) => {
+      formData.append("images", image);
+    });
+
     try {
       const res = await fetch("http://localhost:5000/api/properties", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ ...form, price: Number(form.price) }),
+        // Content-Type header দেওয়া যাবে না, FormData সেটা নিজে ঠিক করে নেয়
+        body: formData,
       });
 
       const data = await res.json();
@@ -238,10 +264,39 @@ export default function AddProperty() {
 
           {/* IMAGE */}
           <div className="form-section">
-            <h2>Images</h2>
-            <div className="upload-box">
+            <h2>Images (Max 5)</h2>
+            <div className="upload-box" style={{ position: "relative", cursor: "pointer" }}>
+              <input 
+                type="file" 
+                multiple 
+                accept="image/*" 
+                onChange={handleImageChange} 
+                style={{ 
+                  position: "absolute", top: 0, left: 0, width: "100%", height: "100%", 
+                  opacity: 0, cursor: "pointer" 
+                }} 
+              />
               Drag &amp; Drop your files or <span>Browse</span>
             </div>
+
+            {/* Image Preview List */}
+            {images.length > 0 && (
+              <div className="image-preview-container">
+                {images.map((img, index) => (
+                  <div key={index} className="image-preview-item">
+                    <img src={URL.createObjectURL(img)} alt={`Preview ${index}`} />
+                    <button 
+                      type="button" 
+                      className="remove-image-btn" 
+                      onClick={() => removeImage(index)}
+                      title="Remove Image"
+                    >
+                      X
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* PRICE */}
