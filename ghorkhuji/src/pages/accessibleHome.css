@@ -206,14 +206,164 @@ button {
 }
 
 .category-item {
-  border: none;
+  border: 2px solid transparent;
   background: rgba(255,255,255,0.95);
   color: #1e293b;
-  padding: 10px 22px;
+  padding: 9px 20px;
   border-radius: 999px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  transition: 0.22s ease;
+}
+
+.category-item:hover {
+  background: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.category-item--active {
+  background: #6366f1 !important;
+  color: #fff !important;
+  border-color: #6366f1;
+  box-shadow: 0 4px 14px rgba(99,102,241,0.45);
+}
+
+.cat-icon {
+  font-size: 16px;
+}
+
+/* ──────────── Section Header ──────────── */
+.section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 0;
+}
+
+.clear-filter-btn {
+  background: #f1f5f9;
+  border: 1.5px solid #e2e8f0;
+  color: #475569;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+  white-space: nowrap;
+}
+
+.clear-filter-btn:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+/* ──────────── State boxes ──────────── */
+.state-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 72px 20px;
+  text-align: center;
+  gap: 16px;
+  color: #64748b;
+}
+
+.state-icon {
+  font-size: 56px;
+}
+
+.state-error {
+  color: #dc2626;
+}
+
+.state-empty .btn {
+  margin-top: 4px;
+}
+
+/* ──────────── Spinner ──────────── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.spinner {
+  width: 46px;
+  height: 46px;
+  border: 4px solid #e2e8f0;
+  border-top-color: #6366f1;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+
+/* ──────────── Property Card Improvements ──────────── */
+.property-img-wrap {
+  position: relative;
+  overflow: hidden;
+}
+
+.cat-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(99,102,241,0.92);
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  backdrop-filter: blur(4px);
+}
+
+.prop-address {
+  font-size: 13px !important;
+  color: #475569 !important;
+  margin: 2px 0 10px !important;
+}
+
+.prop-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.prop-meta span {
+  background: #f1f5f9;
+  color: #475569;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.prop-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.prop-price {
+  font-size: 17px;
+  color: #6366f1;
+}
+
+.prop-month {
+  font-size: 12px;
+  color: #94a3b8;
+  background: #f8fafc;
+  padding: 3px 10px;
+  border-radius: 8px;
 }
 
 .banner-content {

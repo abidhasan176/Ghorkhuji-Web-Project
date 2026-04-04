@@ -7,6 +7,7 @@ import AccessibleHome from "./pages/AccessibleHome";
 import Profile from "./pages/Profile";
 import AddProperty from "./pages/AddProperty";
 import OrderHome from "./pages/OrderHome";
+import PropertyDetails from "./pages/PropertyDetails";
 import ProtectedRoute from "./components/ProtectedRoute"; // Import ProtectedRoute
 
 function App() {
@@ -50,6 +51,15 @@ function App() {
         element={
           <ProtectedRoute>
             <OrderHome />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/property/:id"
+        element={
+          <ProtectedRoute>
+            <PropertyDetails />
           </ProtectedRoute>
         }
       />
