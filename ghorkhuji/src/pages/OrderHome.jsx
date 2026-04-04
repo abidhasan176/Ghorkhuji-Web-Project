@@ -15,6 +15,7 @@ export default function OrderHome() {
     category: "", gender: "", room: "", bathroom: "", needFrom: "", maxBudget: "",
     kitchen: "", gas: "", livingSpace: "", roomSharing: "",
     floorPreference: "", lift: "", parking: "",
+    detailedAddress: "",
     agreedToTerms: false,
   });
 
@@ -27,11 +28,6 @@ export default function OrderHome() {
     setLocations((prev) =>
       prev.map((loc, i) => (i === index ? { ...loc, [name]: value } : loc))
     );
-  };
-
-  // নতুন location row যোগ করা
-  const addMoreLocation = () => {
-    setLocations((prev) => [...prev, { division: "", district: "", area: "" }]);
   };
 
   // বাকি ফিল্ড পরিবর্তন হলে
@@ -97,47 +93,53 @@ export default function OrderHome() {
         <form onSubmit={handleSubmit}>
 
           {/* LOCATION */}
-          {locations.map((loc, index) => (
-            <div className="form-card" key={index}>
-              <h2>Location {locations.length > 1 ? `#${index + 1}` : ""}</h2>
+          <div className="form-card">
+            <h2>Location Information</h2>
 
-              <div className="grid-3">
-                <div>
-                  <label>Division *</label>
-                  <select name="division" value={loc.division} onChange={(e) => handleLocationChange(index, e)} required>
-                    <option value="">Select an option</option>
-                    <option>Dhaka</option><option>Chittagong</option><option>Rajshahi</option>
-                    <option>Khulna</option><option>Barishal</option><option>Sylhet</option>
-                    <option>Rangpur</option><option>Mymensingh</option>
-                  </select>
-                </div>
+            <div className="grid-3">
+              <div>
+                <label>Division *</label>
+                <select name="division" value={locations[0].division} onChange={(e) => handleLocationChange(0, e)} required>
+                  <option value="">Select an option</option>
+                  <option>Dhaka</option><option>Chittagong</option><option>Rajshahi</option>
+                  <option>Khulna</option><option>Barishal</option><option>Sylhet</option>
+                  <option>Rangpur</option><option>Mymensingh</option>
+                </select>
+              </div>
 
-                <div>
-                  <label>District *</label>
-                  <select name="district" value={loc.district} onChange={(e) => handleLocationChange(index, e)} required>
-                    <option value="">Select an option</option>
-                    <option>Dhaka</option><option>Gazipur</option><option>Narayanganj</option>
-                    <option>Chittagong</option><option>Rajshahi</option><option>Khulna</option>
-                    <option>Cumilla</option><option>Mymensingh</option>
-                  </select>
-                </div>
+              <div>
+                <label>District *</label>
+                <select name="district" value={locations[0].district} onChange={(e) => handleLocationChange(0, e)} required>
+                  <option value="">Select an option</option>
+                  <option>Dhaka</option><option>Gazipur</option><option>Narayanganj</option>
+                  <option>Chittagong</option><option>Rajshahi</option><option>Khulna</option>
+                  <option>Cumilla</option><option>Mymensingh</option>
+                </select>
+              </div>
 
-                <div>
-                  <label>Area *</label>
-                  <select name="area" value={loc.area} onChange={(e) => handleLocationChange(index, e)} required>
-                    <option value="">Select an option</option>
-                    <option>Mirpur</option><option>Dhanmondi</option><option>Uttara</option>
-                    <option>Mohammadpur</option><option>Gulshan</option><option>Banani</option>
-                    <option>Motijheel</option><option>Old Dhaka</option><option>Bashundhara</option>
-                  </select>
-                </div>
+              <div>
+                <label>Area *</label>
+                <select name="area" value={locations[0].area} onChange={(e) => handleLocationChange(0, e)} required>
+                  <option value="">Select an option</option>
+                  <option>Mirpur</option><option>Dhanmondi</option><option>Uttara</option>
+                  <option>Mohammadpur</option><option>Gulshan</option><option>Banani</option>
+                  <option>Motijheel</option><option>Old Dhaka</option><option>Bashundhara</option>
+                </select>
               </div>
             </div>
-          ))}
 
-          <button type="button" className="add-location" onClick={addMoreLocation}>
-            Add More Location
-          </button>
+            <div style={{ marginTop: "16px" }}>
+              <label>Detailed Location / Address (Block, Road, Sector, etc.)</label>
+              <input 
+                type="text" 
+                name="detailedAddress" 
+                value={form.detailedAddress} 
+                onChange={handleChange} 
+                placeholder="e.g. Block C, Road 5, Sector 10" 
+                style={{ width: "100%", padding: "12px", borderRadius: "8px", border: "1px solid #cbd5e1", marginTop: "8px" }}
+              />
+            </div>
+          </div>
 
           {/* PRIMARY REQUIREMENTS */}
           <div className="form-card">

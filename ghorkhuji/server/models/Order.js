@@ -11,7 +11,7 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
 
-    // Location — কোথায় বাসা চাই (multiple location support)
+    // Location — কোথায় বাসা চাই (single location support)
     locations: [
       {
         division: { type: String, required: true },
@@ -19,6 +19,7 @@ const orderSchema = new mongoose.Schema(
         area: { type: String, required: true },
       },
     ],
+    detailedAddress: { type: String, default: "" },
 
     // Primary Requirements
     category: { type: String, required: true },       // Family, Bachelor, Office, etc.
