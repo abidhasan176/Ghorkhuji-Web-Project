@@ -3,26 +3,56 @@
   display: grid;
   place-items: center;
   padding: 24px 16px;
-  background: #f6f7fb;
   box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Blurred banner background */
+.authWrap::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url('https://images.unsplash.com/photo-1460317442991-0ec209397118?q=80&w=1600&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+  filter: blur(8px) brightness(0.45);
+  transform: scale(1.08);
+  z-index: 0;
+}
+
+/* Dark overlay */
+.authWrap::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 15, 30, 0.55);
+  z-index: 1;
 }
 
 .authCard {
   width: 520px;
   max-width: 100%;
-  background: #fff;
-  border-radius: 18px;
-  padding: 28px;
-  border: 1px solid #e9e9ee;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 32px 28px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
   box-sizing: border-box;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.45);
+  position: relative;
+  z-index: 2;
 }
 
 .authTitle {
   text-align: center;
-  font-size: 44px;
-  margin: 10px 0 18px;
-  color: #2c3a4b;
+  font-size: 36px;
+  margin: 0 0 20px;
+  color: #ffffff;
   line-height: 1.2;
+  font-weight: 800;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
 }
 
 .authForm {
@@ -31,8 +61,8 @@
 }
 
 .label {
-  font-size: 22px;
-  color: #2c3a4b;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.9);
   font-weight: 600;
 }
 
@@ -42,42 +72,45 @@
 
 .input {
   width: 100%;
-  height: 54px;
-  border-radius: 16px;
-  border: 1px solid #e2e6ef;
+  height: 48px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
   outline: none;
   padding: 0 16px;
-  font-size: 18px;
-  background: #fff;
-  color: #2c3a4b;
-  caret-color: #2c3a4b;
+  font-size: 15px;
+  background: #ffffff;
+  color: #1e293b;
+  caret-color: #6366f1;
   box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .input::placeholder {
-  color: #8a94a6;
+  color: #94a3b8;
 }
 
 .input:focus {
-  border-color: #b8c7ff;
-  box-shadow: 0 0 0 4px rgba(77, 120, 255, 0.12);
+  border-color: #a5b4fc;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+  background: #ffffff;
 }
 
 .phoneRow {
   display: grid;
-  grid-template-columns: 140px 1fr;
-  gap: 12px;
+  grid-template-columns: 130px 1fr;
+  gap: 10px;
 }
 
 .countryBox {
   display: flex;
   align-items: center;
   gap: 8px;
-  height: 54px;
-  border-radius: 16px;
-  border: 1px solid #e2e6ef;
+  height: 48px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
   padding: 0 12px;
   box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .phoneIcon {
@@ -89,10 +122,11 @@
   border: none;
   outline: none;
   width: 100%;
-  font-size: 18px;
+  font-size: 14px;
+  font-weight: 600;
   background: transparent;
-  color: #2c3a4b;
-  caret-color: #2c3a4b;
+  color: #ffffff;
+  caret-color: #a5b4fc;
 }
 
 .passWrap {
@@ -101,60 +135,70 @@
 
 .showBtn {
   position: absolute;
-  right: 12px;
+  right: 10px;
   top: 50%;
   transform: translateY(-50%);
-  border: none;
-  background: transparent;
-  font-size: 18px;
-  color: #1e66ff;
+  border: 1px solid rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.15);
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
   cursor: pointer;
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-family: inherit;
 }
 
 .primaryBtn {
   margin-top: 6px;
-  height: 60px;
+  height: 50px;
   border: none;
-  border-radius: 18px;
-  background: #0b66d2;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #6366f1, #9333ea);
   color: #fff;
-  font-size: 22px;
+  font-size: 16px;
   font-weight: 700;
   cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+  transition: 0.2s ease;
 }
 
 .primaryBtn:hover {
-  filter: brightness(0.95);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(99, 102, 241, 0.5);
 }
 
 .linkBtn {
   margin-top: 6px;
   border: none;
   background: transparent;
-  color: #1e66ff;
-  font-size: 20px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
   cursor: pointer;
+  font-family: inherit;
 }
 
 .bottomLinks {
-  margin-top: 18px;
+  margin-top: 16px;
   display: grid;
-  gap: 14px;
+  gap: 10px;
   text-align: center;
-  font-size: 20px;
+  font-size: 14px;
 }
 
 .muted {
-  color: #5d6a7a;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .bottomLinks a {
-  color: #1e66ff;
+  color: #a5b4fc;
   text-decoration: none;
   font-weight: 600;
 }
 
 .bottomLinks a:hover {
+  color: #fff;
   text-decoration: underline;
 }
 
@@ -163,38 +207,32 @@
 ========================= */
 @media (max-width: 768px) {
   .authCard {
-    padding: 22px;
-    border-radius: 16px;
+    padding: 24px 20px;
+    border-radius: 18px;
   }
 
   .authTitle {
-    font-size: 34px;
+    font-size: 28px;
   }
 
   .label {
-    font-size: 18px;
+    font-size: 14px;
   }
 
   .input,
   .countryBox {
-    height: 50px;
-  }
-
-  .input,
-  .countryInput,
-  .showBtn {
-    font-size: 16px;
+    height: 46px;
   }
 
   .primaryBtn {
-    height: 54px;
-    font-size: 18px;
-    border-radius: 16px;
+    height: 46px;
+    font-size: 15px;
+    border-radius: 12px;
   }
 
   .linkBtn,
   .bottomLinks {
-    font-size: 17px;
+    font-size: 14px;
   }
 
   .phoneRow {
