@@ -1,20 +1,23 @@
 import express from "express";
 import Property from "../models/Property.js";
 import authMiddleware from "../middleware/authMiddleware.js";
+import upload from "../middleware/uploadMiddleware.js";
+import cloudinary from "../config/cloudinary.js";
 
 const router = express.Router();
 
 // ============================================================
 // POST /api/properties — নতুন property post করা (Malik করবে)
 // authMiddleware দিয়ে check করা হচ্ছে user logged in কিনা
+// upload.array("images", 5) — সর্বোচ্চ 5 টা ছবি allow করা হবে
 // ============================================================
-router.post("/", authMiddleware, async (req, res) => {
+router.post("/", authMiddleware, upload.array("images", 5), async (req, res) => {
   try {
     const {
       month, category, propertyType, bedroom, bathroom,
       balcony, floor, gender, size,
       division, district, area, block, sectorNo, roadNo, houseNo, postalCode, shortAddress,
-      details, images,
+      details,
       price, priceType,
       includesElectricity, includesGas, includesWater, includesLift, includesSecurity,
       includesServant, includesNet,
@@ -23,6 +26,25 @@ router.post("/", authMiddleware, async (req, res) => {
     // Required fields check
     if (!month || !category || !propertyType || !bedroom || !bathroom || !gender || !division || !district || !area || !shortAddress || !price) {
       return res.status(400).json({ message: "Required fields missing" });
+    }
+
+    // Cloudinary-তে ছবিগুলো আপলোড করা
+    let uploadedImages = [];
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
+        // Buffer থেকে Data URI তৈরি করা
+        const b64 = Buffer.from(file.buffer).toString("base64");
+        const dataURI = "data:" + file.mimetype + ";base64," + b64;
+
+        try {
+          const cloudRes = await cloudinary.uploader.upload(dataURI, {
+            folder: "ghorkhuji_properties", // ফোল্ডারের নাম
+          });
+          uploadedImages.push(cloudRes.secure_url);
+        } catch (uploadErr) {
+          console.log("❌ Cloudinary upload error:", uploadErr.message);
+        }
+      }
     }
 
     // নতুন property তৈরি — postedBy তে logged in user-এর ID যাবে
@@ -40,7 +62,7 @@ router.post("/", authMiddleware, async (req, res) => {
       postalCode: postalCode || "",
       shortAddress,
       details: details || "",
-      images: images || [],
+      images: uploadedImages, // Cloudinary থেকে পাওয়া URL-গুলো সেভ হচ্ছে
       price,
       priceType: priceType || "Monthly",
       includesElectricity: includesElectricity || false,
