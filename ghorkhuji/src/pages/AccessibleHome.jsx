@@ -39,8 +39,8 @@ export default function AccessibleHome() {
     }
   }, [navigate]);
 
-  const handleLogout = () => {
-    clearAuth();
+  const handleLogout = async () => {
+    await clearAuth();
     navigate("/login");
   };
 
@@ -63,10 +63,31 @@ export default function AccessibleHome() {
             <a href="#footer">Contact</a>
           </nav>
 
-          <div className="nav-actions" style={{ display: "flex", gap: "10px" }}>
-            <button className="iconBtn" onClick={() => navigate("/profile")}>
+          <div className="nav-actions">
+            <button
+              className="top-action-btn"
+              onClick={() => navigate("/add-property")}
+            >
+              <span className="top-action-icon">＋</span>
+              <span>Add Property</span>
+            </button>
+
+            <button
+              className="top-action-btn"
+              onClick={() => navigate("/order-home")}
+            >
+              <span className="top-action-icon">⌂</span>
+              <span>Order Home</span>
+            </button>
+
+            <button
+              className="iconBtn"
+              onClick={() => navigate("/profile")}
+              title="Profile"
+            >
               👤
             </button>
+
             <button className="btn btn-dark" onClick={handleLogout}>
               Logout
             </button>
