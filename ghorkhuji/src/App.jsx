@@ -18,7 +18,14 @@ function App() {
     <Routes>
       {/* Public Routes */}
       <Route path="/" element={<Home />} />
-      <Route path="/accessible-home" element={<AccessibleHome />} />
+      <Route
+        path="/accessible-home"
+        element={
+          <ProtectedRoute>
+            <AccessibleHome />
+          </ProtectedRoute>
+        }
+      />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
