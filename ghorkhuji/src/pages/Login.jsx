@@ -102,22 +102,51 @@ export default function Login() {
   });
 
   return (
-    <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", padding: 24, background: "#0d1117" }}>
-      <div style={{ width: "100%", maxWidth: 420 }}>
+    <div style={{
+      minHeight: "100vh",
+      display: "grid",
+      placeItems: "center",
+      padding: 24,
+      position: "relative",
+      overflow: "hidden",
+    }}>
+      {/* Blurred background image */}
+      <div style={{
+        position: "fixed",
+        inset: 0,
+        backgroundImage: "url('https://images.unsplash.com/photo-1460317442991-0ec209397118?q=80&w=1600&auto=format&fit=crop')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        filter: "blur(8px) brightness(0.45)",
+        transform: "scale(1.08)",
+        zIndex: 0,
+      }} />
+      {/* Dark overlay */}
+      <div style={{ position: "fixed", inset: 0, background: "rgba(10,15,30,0.55)", zIndex: 1 }} />
+
+      <div style={{ width: "100%", maxWidth: 420, position: "relative", zIndex: 2 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20, justifyContent: "center" }}>
-          <div style={{ width: 44, height: 44, borderRadius: 12, background: "linear-gradient(135deg,#1f6feb,#58a6ff)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 10px 24px rgba(31,111,235,0.35)", flexShrink: 0 }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <div style={{ width: 48, height: 48, borderRadius: 14, background: "linear-gradient(135deg,#6366f1,#9333ea)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 10px 24px rgba(99,102,241,0.45)", flexShrink: 0 }}>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
               <path d="M3 10.5L12 3L21 10.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               <path d="M6 9.5V20H18V9.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               <path d="M10 20V14H14V20" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
-          <h1 style={{ margin: 0, color: "#f0f6fc", fontSize: 24, fontWeight: 700, letterSpacing: "-0.4px" }}>
+          <h1 style={{ margin: 0, color: "#ffffff", fontSize: 26, fontWeight: 800, letterSpacing: "-0.5px", textShadow: "0 2px 12px rgba(0,0,0,0.4)" }}>
             Login to GhorKhuji
           </h1>
         </div>
 
-        <div style={{ background: "#161b22", border: "1px solid #30363d", borderRadius: 16, padding: 24, boxShadow: "0 20px 40px rgba(0,0,0,0.35)" }}>
+        <div style={{
+          background: "rgba(255,255,255,0.08)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          border: "1px solid rgba(255,255,255,0.18)",
+          borderRadius: 20,
+          padding: 28,
+          boxShadow: "0 24px 48px rgba(0,0,0,0.45)",
+        }}>
           {errorMsg && (
             <div style={{ marginBottom: 14, padding: "10px 12px", borderRadius: 8, background: "rgba(248,81,73,0.12)", border: "1px solid rgba(248,81,73,0.35)", color: "#ffb4a9", fontSize: 14 }}>
               {errorMsg}
@@ -125,12 +154,12 @@ export default function Login() {
           )}
 
           <form onSubmit={handleLogin}>
-            <label style={{ display: "block", marginBottom: 8, color: "#f0f6fc", fontSize: 14, fontWeight: 600 }}>
+            <label style={{ display: "block", marginBottom: 8, color: "rgba(255,255,255,0.9)", fontSize: 14, fontWeight: 600 }}>
               Phone number
             </label>
 
             <div style={{ display: "flex", gap: 10 }}>
-              <div style={{ height: 46, minWidth: 72, padding: "0 12px", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid #30363d", borderRadius: 10, background: "#0d1117", color: "#e6edf3", fontSize: 15, fontWeight: 500 }}>
+              <div style={{ height: 46, minWidth: 72, padding: "0 12px", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid rgba(255,255,255,0.25)", borderRadius: 10, background: "rgba(255,255,255,0.12)", color: "#fff", fontSize: 15, fontWeight: 600 }}>
                 +880
               </div>
               <input
@@ -145,7 +174,7 @@ export default function Login() {
 
             {phoneError && <div style={{ color: "#ff7b72", marginTop: 6, fontSize: 13 }}>{phoneError}</div>}
 
-            <label style={{ display: "block", marginTop: 16, marginBottom: 8, color: "#f0f6fc", fontSize: 14, fontWeight: 600 }}>
+            <label style={{ display: "block", marginTop: 16, marginBottom: 8, color: "rgba(255,255,255,0.9)", fontSize: 14, fontWeight: 600 }}>
               Password
             </label>
 
@@ -162,7 +191,7 @@ export default function Login() {
               <button
                 type="button"
                 onClick={() => setShowPass((p) => !p)}
-                style={{ position: "absolute", right: 8, top: 6, height: 34, padding: "0 12px", borderRadius: 8, border: "1px solid #30363d", background: "#0d1117", color: "#e6edf3", cursor: "pointer" }}
+                style={{ position: "absolute", right: 8, top: 6, height: 34, padding: "0 12px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.25)", background: "rgba(255,255,255,0.15)", color: "#fff", cursor: "pointer", fontFamily: "inherit", fontSize: 13, fontWeight: 600 }}
               >
                 {showPass ? "Hide" : "Show"}
               </button>
@@ -170,17 +199,18 @@ export default function Login() {
 
             {passError && <div style={{ color: "#ff7b72", marginTop: 6, fontSize: 13 }}>{passError}</div>}
 
-            <div style={{ marginTop: 12 }}>
-              <label style={{ display: "flex", alignItems: "center", gap: 8, color: "#e6edf3", fontSize: 14 }}>
+            <div style={{ marginTop: 12, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <label style={{ display: "flex", alignItems: "center", gap: 8, color: "rgba(255,255,255,0.85)", fontSize: 14 }}>
                 <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
                 Remember phone
               </label>
+              <Link to="/forgot-password" style={{ color: "#58a6ff", fontSize: 13, textDecoration: "none", fontWeight: 600 }}>Forget Password?</Link>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              style={{ marginTop: 18, width: "100%", height: 46, borderRadius: 10, border: "none", background: "#1f6feb", color: "white", fontSize: 15, fontWeight: 600, cursor: "pointer" }}
+              style={{ marginTop: 18, width: "100%", height: 48, borderRadius: 12, border: "none", background: "linear-gradient(135deg, #6366f1, #9333ea)", color: "white", fontSize: 15, fontWeight: 700, cursor: "pointer", boxShadow: "0 8px 20px rgba(99,102,241,0.4)", fontFamily: "inherit" }}
             >
               {loading ? "Logging in..." : "Login"}
             </button>

@@ -69,6 +69,7 @@ export default function Register() {
             name="name"
             value={form.name}
             onChange={onChange}
+            placeholder="Enter your full name"
           />
 
           <label className="label">
@@ -90,6 +91,7 @@ export default function Register() {
               name="phone"
               value={form.phone}
               onChange={onChange}
+              placeholder="Enter phone number"
             />
           </div>
 
@@ -103,6 +105,7 @@ export default function Register() {
               value={form.password}
               onChange={onChange}
               type={showPass ? "text" : "password"}
+              placeholder="Enter password"
             />
             <button
               type="button"
@@ -119,6 +122,7 @@ export default function Register() {
             name="referral"
             value={form.referral}
             onChange={onChange}
+            placeholder="Enter referral code (optional)"
           />
 
           <button className="primaryBtn" type="submit" disabled={loading}>
@@ -132,9 +136,6 @@ export default function Register() {
           <div className="bottomLinks">
             <div className="muted">
               Already have account? <Link to="/login">Login</Link>
-            </div>
-            <div>
-              <Link to="/forgot-password">Forget Password?</Link>
             </div>
           </div>
         </form>
