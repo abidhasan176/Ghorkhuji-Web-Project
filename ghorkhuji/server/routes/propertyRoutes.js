@@ -81,6 +81,49 @@ router.get("/", async (req, res) => {
 });
 
 // ============================================================
+// GET /api/properties/search —property search
+// ============================================================
+router.get("/search", async (req, res) => {
+  try {
+    const { query, category, maxBudget, propertyType } = req.query;
+
+    let filter = { isActive: true };
+
+    if (category && category !== "All") {
+       filter.category = category;
+    }
+
+    if (propertyType && propertyType !== "All") {
+       filter.propertyType = propertyType;
+    }
+
+    if (maxBudget) {
+       filter.price = { $lte: Number(maxBudget) };
+    }
+
+    if (query) {
+      // Create a regex to match the search term case-insensitively in area, district, division, shortAddress
+      const regex = new RegExp(query, "i");
+      filter.$or = [
+        { area: regex },
+        { district: regex },
+        { division: regex },
+        { shortAddress: regex }
+      ];
+    }
+
+    const properties = await Property.find(filter)
+      .sort({ createdAt: -1 })
+      .populate("postedBy", "name phone");
+
+    return res.status(200).json({ properties });
+  } catch (err) {
+    console.log("❌ Search properties error:", err.message);
+    return res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ============================================================
 // GET /api/properties/:id — একটা নির্দিষ্ট property দেখা
 // ============================================================
 router.get("/:id", async (req, res) => {

@@ -160,4 +160,57 @@ router.post("/logout", (req, res) => {
   return res.status(200).json({ message: "Logged out successfully" });
 });
 
+// GET SAVED PROPERTIES
+router.get("/saved-properties", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).populate({
+      path: "savedProperties",
+      populate: { path: "postedBy", select: "name phone" },
+    });
+    
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Filter to only return active properties, matching the feed behavior
+    const activeSavedProperties = (user.savedProperties || []).filter(prop => prop.isActive);
+
+    return res.status(200).json({ savedProperties: activeSavedProperties });
+  } catch (err) {
+    console.log("❌ Get saved properties error:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+});
+
+// TOGGLE SAVE PROPERTY
+router.post("/saved-properties/:propertyId", authMiddleware, async (req, res) => {
+  try {
+    const propertyId = req.params.propertyId;
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Toggle logic
+    const index = user.savedProperties.indexOf(propertyId);
+    let isSaved;
+    if (index === -1) {
+      // Add to array
+      user.savedProperties.push(propertyId);
+      isSaved = true;
+    } else {
+      // Remove from array
+      user.savedProperties.splice(index, 1);
+      isSaved = false;
+    }
+
+    await user.save();
+    return res.status(200).json({ isSaved, savedProperties: user.savedProperties });
+  } catch (err) {
+    console.log("❌ Toggle saved property error:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+});
+
 export default router;

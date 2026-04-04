@@ -16,6 +16,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
+const ALLOWED_ORIGINS = [CLIENT_URL, "http://localhost:5174", "http://localhost:5175"];
 
 // Middleware
 app.use(express.json());
@@ -26,7 +27,7 @@ app.use(cookieParser());
 // CORS config
 app.use(
   cors({
-    origin: CLIENT_URL,
+    origin: ALLOWED_ORIGINS,
     credentials: true,
   })
 );

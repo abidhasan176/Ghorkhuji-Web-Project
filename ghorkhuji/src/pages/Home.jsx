@@ -30,12 +30,7 @@ export default function Home() {
   useReveal();
 
   const handleBrowse = () => {
-    const token = getToken();
-    if (token) {
-      navigate("/accessible-home");
-    } else {
-      navigate("/login");
-    }
+    navigate("/accessible-home");
   };
 
   return (

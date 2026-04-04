@@ -27,28 +27,60 @@ export default function PropertyDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const [savedPropertyIds, setSavedPropertyIds] = useState(new Set());
+
   useEffect(() => {
-    const fetchProperty = async () => {
+    const fetchPropertyAndSaved = async () => {
       setLoading(true);
       setError("");
       try {
-        const res = await fetch(`http://localhost:5000/api/properties/${id}`, {
-          credentials: "include",
-        });
-        const data = await res.json();
-        if (res.ok) {
+        const [propRes, savedRes] = await Promise.all([
+          fetch(`http://localhost:5000/api/properties/${id}`, { credentials: "include" }),
+          fetch("http://localhost:5000/api/auth/saved-properties", { credentials: "include" }),
+        ]);
+
+        if (propRes.ok) {
+          const data = await propRes.json();
           setProperty(data.property);
         } else {
+          const data = await propRes.json();
           setError(data.message || "Property not found.");
         }
+
+        if (savedRes.ok) {
+           const data = await savedRes.json();
+           const ids = data.savedProperties?.map(p => p._id) || [];
+           setSavedPropertyIds(new Set(ids));
+        }
+
       } catch (err) {
         setError("Server error. Make sure the server is running.");
       } finally {
         setLoading(false);
       }
     };
-    fetchProperty();
+    fetchPropertyAndSaved();
   }, [id]);
+
+  const handleToggleSave = async () => {
+    try {
+      const res = await fetch(`http://localhost:5000/api/auth/saved-properties/${id}`, {
+         method: "POST",
+         credentials: "include"
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setSavedPropertyIds(prev => {
+          const newSet = new Set(prev);
+          if (data.isSaved) newSet.add(id);
+          else newSet.delete(id);
+          return newSet;
+        });
+      }
+    } catch (err) {
+       console.log(err);
+    }
+  };
 
   if (loading) {
     return (
@@ -87,6 +119,7 @@ export default function PropertyDetails() {
   ];
 
   const includedBills = bills.filter((b) => property[b.key]);
+  const isSaved = savedPropertyIds.has(id);
 
   return (
     <div className="pd-page">
@@ -129,8 +162,26 @@ export default function PropertyDetails() {
               <span className="pd-price-amount">৳ {Number(property.price).toLocaleString()}</span>
               <span className="pd-price-type">/ {property.priceType}</span>
             </div>
-            <div className="pd-price-right">
+            <div className="pd-price-right" style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
               <span className="pd-month-badge">Available: {property.month}</span>
+              <button 
+                onClick={handleToggleSave}
+                style={{
+                  background: isSaved ? "#fff" : "rgba(255,255,255,0.2)", 
+                  border: isSaved ? "none" : "1px solid rgba(255,255,255,0.4)",
+                  borderRadius: "50%",
+                  width: "44px", height: "44px",
+                  cursor: "pointer", 
+                  boxShadow: isSaved ? "0 4px 10px rgba(0,0,0,0.15)" : "none",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  transition: "all 0.2s ease"
+                }}
+                title={isSaved ? "Remove from saved" : "Save this property"}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill={isSaved ? "white" : "transparent"} stroke={isSaved ? "black" : "#cbd5e1"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              </button>
             </div>
           </div>
 
