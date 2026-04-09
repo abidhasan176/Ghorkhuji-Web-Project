@@ -11,6 +11,7 @@ import PropertyDetails from "./pages/PropertyDetails";
 import OrderDetails from "./pages/OrderDetails";
 import SavedProperties from "./pages/SavedProperties";
 import SearchProperties from "./pages/SearchProperties";
+import Chat from "./pages/Chat";
 import ProtectedRoute from "./components/ProtectedRoute"; // Import ProtectedRoute
 
 function App() {
@@ -89,6 +90,24 @@ function App() {
         element={
           <ProtectedRoute>
             <SavedProperties />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/chat"
+        element={
+          <ProtectedRoute>
+            <Chat />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/chat/:ownerId"
+        element={
+          <ProtectedRoute>
+            <Chat />
           </ProtectedRoute>
         }
       />
