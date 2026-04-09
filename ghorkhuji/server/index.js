@@ -10,6 +10,9 @@ import cookieParser from "cookie-parser";
 import authRoutes from "./routes/authRoutes.js";
 import propertyRoutes from "./routes/propertyRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
+import messageRoutes from "./routes/messageRoutes.js";
+import http from "http";
+import { Server } from "socket.io";
 
 dotenv.config();
 
@@ -40,13 +43,60 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);           // Auth routes (login, register, logout)
 app.use("/api/properties", propertyRoutes); // Property routes (AddProperty form)
 app.use("/api/orders", orderRoutes);         // Order routes (OrderHome form)
+app.use("/api/messages", messageRoutes);     // Message routes (Chat feature)
+
+// Socket.io setup
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: ALLOWED_ORIGINS,
+    methods: ["GET", "POST"],
+  },
+});
+
+// Map to store connected users (userId -> socketId)
+const connectedUsers = new Map();
+
+io.on("connection", (socket) => {
+  console.log("A user connected:", socket.id);
+
+  // When a user logs in / connects, they emit their user ID
+  socket.on("addUser", (userId) => {
+    connectedUsers.set(userId, socket.id);
+  });
+
+  // Handle sending message
+  socket.on("sendMessage", ({ senderId, receiverId, text, propertyId }) => {
+    const receiverSocketId = connectedUsers.get(receiverId);
+    if (receiverSocketId) {
+      // Send real-time message to receiver
+      io.to(receiverSocketId).emit("getMessage", {
+        senderId,
+        text,
+        propertyId,
+        createdAt: new Date().toISOString(),
+      });
+    }
+  });
+
+  // Handle disconnect
+  socket.on("disconnect", () => {
+    console.log("User disconnected:", socket.id);
+    for (let [userId, socketId] of connectedUsers.entries()) {
+      if (socketId === socket.id) {
+        connectedUsers.delete(userId);
+        break;
+      }
+    }
+  });
+});
 
 // MongoDB connection
 mongoose
   .connect(process.env.MONGO_URI, { family: 4 }) // ✅ 'family: 4' যোগ করা হয়েছে IPv6 এরর বাইপাস করার জন্য
   .then(() => {
     console.log("✅ MongoDB connected");
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);
     });
   })
