@@ -321,6 +321,28 @@ export default function PropertyDetails() {
                       📱 {property.postedBy.phone}
                     </a>
                   )}
+                  <button 
+                    className="pd-chat-btn" 
+                    onClick={() => navigate(`/chat/${property.postedBy._id || property.postedBy}?propertyId=${property._id}`)}
+                    style={{
+                      marginTop: '10px',
+                      padding: '8px 16px',
+                      background: '#2563eb',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      transition: 'background 0.2s ease',
+                      boxShadow: '0 4px 6px rgba(37, 99, 235, 0.2)'
+                    }}
+                  >
+                    💬 Chat with Owner
+                  </button>
                 </div>
               </div>
             </div>

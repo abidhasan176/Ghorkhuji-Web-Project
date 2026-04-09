@@ -44,6 +44,7 @@ export default function AccessibleHome() {
 
   // Saved properties state
   const [savedPropertyIds, setSavedPropertyIds] = useState(new Set());
+  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -108,6 +109,26 @@ export default function AccessibleHome() {
     };
 
     fetchData();
+
+    // Polling for unread messages
+    let interval;
+    if (getToken()) {
+      const fetchUnread = async () => {
+        try {
+          const res = await fetch("http://localhost:5000/api/messages/unread", { credentials: "include" });
+          if (res.ok) {
+            const data = await res.json();
+            setUnreadCount(data.unreadCount || 0);
+          }
+        } catch (e) {}
+      };
+      fetchUnread();
+      interval = setInterval(fetchUnread, 5000);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, []);
 
   const handleToggleSave = async (propertyId) => {
@@ -211,6 +232,18 @@ export default function AccessibleHome() {
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="white" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                   </svg>
+                </button>
+                <button className="iconBtn" style={{ position: 'relative' }} onClick={() => navigate("/chat")} title="Messages">
+                  💬
+                  {unreadCount > 0 && (
+                    <span style={{
+                      position: 'absolute', top: '-5px', right: '-5px',
+                      background: 'red', color: 'white', fontSize: '10px',
+                      fontWeight: 'bold', padding: '2px 6px', borderRadius: '10px'
+                    }}>
+                      {unreadCount}
+                    </span>
+                  )}
                 </button>
                 <button className="iconBtn" onClick={() => navigate("/profile")} title="Profile">
                   👤
