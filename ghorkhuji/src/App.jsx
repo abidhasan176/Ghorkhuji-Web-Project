@@ -13,6 +13,9 @@ import SavedProperties from "./pages/SavedProperties";
 import SearchProperties from "./pages/SearchProperties";
 import Chat from "./pages/Chat";
 import ProtectedRoute from "./components/ProtectedRoute"; // Import ProtectedRoute
+import PaymentSuccess from "./pages/PaymentSuccess";
+import PaymentFail from "./pages/PaymentFail";
+import PaymentCancel from "./pages/PaymentCancel";
 
 function App() {
   return (
@@ -111,6 +114,11 @@ function App() {
           </ProtectedRoute>
         }
       />
+
+      {/* Payment Gateway Routes */}
+      <Route path="/payment-success" element={<PaymentSuccess />} />
+      <Route path="/payment-fail" element={<PaymentFail />} />
+      <Route path="/payment-cancel" element={<PaymentCancel />} />
     </Routes>
   );
 }

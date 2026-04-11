@@ -7,10 +7,14 @@ import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
+import morgan from "morgan";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 import authRoutes from "./routes/authRoutes.js";
 import propertyRoutes from "./routes/propertyRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
 import http from "http";
 import { Server } from "socket.io";
 
@@ -20,6 +24,33 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
 const ALLOWED_ORIGINS = [CLIENT_URL, "http://localhost:5174", "http://localhost:5175"];
+
+// ─────────────────────────────────────────────
+// ① Morgan — HTTP Request Logger
+// প্রতিটা API call terminal এ log করে দেখায়
+// যেমন: GET /api/properties 200 23ms
+// ─────────────────────────────────────────────
+app.use(morgan("dev"));
+
+// ─────────────────────────────────────────────
+// ② Helmet — Security Headers
+// Clickjacking, XSS, MIME sniffing এর মতো
+// সাধারণ web attack থেকে সার্ভার রক্ষা করে
+// ─────────────────────────────────────────────
+app.use(helmet({ contentSecurityPolicy: false }));
+
+// ─────────────────────────────────────────────
+// ③ Rate Limiting — Brute Force Protection
+// Login/Register এ ৫ মিনিটে সর্বোচ্চ ১০ বার try
+// বেশি চেষ্টা করলে 429 Too Many Requests দেবে
+// ─────────────────────────────────────────────
+const authLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 10,
+  message: { message: "Too many attempts. Please wait 5 minutes and try again." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // Middleware
 app.use(express.json());
@@ -40,10 +71,11 @@ app.get("/", (req, res) => {
   res.send("API running ✅");
 });
 
-app.use("/api/auth", authRoutes);           // Auth routes (login, register, logout)
-app.use("/api/properties", propertyRoutes); // Property routes (AddProperty form)
-app.use("/api/orders", orderRoutes);         // Order routes (OrderHome form)
-app.use("/api/messages", messageRoutes);     // Message routes (Chat feature)
+app.use("/api/auth", authLimiter, authRoutes); // Auth routes — Rate Limited
+app.use("/api/properties", propertyRoutes);    // Property routes
+app.use("/api/orders", orderRoutes);            // Order routes
+app.use("/api/messages", messageRoutes);        // Message routes
+app.use("/api/payment", paymentRoutes);         // Payment routes
 
 // Socket.io setup
 const server = http.createServer(app);
@@ -88,6 +120,17 @@ io.on("connection", (socket) => {
         break;
       }
     }
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ④ Global Error Handler — সব Unhandled Error এখানে আসবে
+// প্রতিটা route এ আলাদা করে 500 error না দিলেও এটা কভার করবে
+// ─────────────────────────────────────────────────────────────────────────────
+app.use((err, req, res, next) => {
+  console.error("❌ Global Error:", err.message);
+  res.status(err.status || 500).json({
+    message: err.message || "Internal Server Error",
   });
 });
 

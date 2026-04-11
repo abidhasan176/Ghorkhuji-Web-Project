@@ -1,0 +1,79 @@
+.book-now-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.book-now-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(26, 115, 232, 0.4);
+  letter-spacing: 0.3px;
+}
+
+.book-now-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(26, 115, 232, 0.5);
+  background: linear-gradient(135deg, #1e88e5 0%, #1565c0 100%);
+}
+
+.book-now-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(26, 115, 232, 0.3);
+}
+
+.book-now-btn.loading,
+.book-now-btn:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-icon {
+  font-size: 18px;
+}
+
+/* Loading Spinner */
+.btn-spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.book-now-error {
+  font-size: 13px;
+  color: #e53935;
+  background: rgba(229, 57, 53, 0.08);
+  border: 1px solid rgba(229, 57, 53, 0.25);
+  border-radius: 8px;
+  padding: 8px 14px;
+  margin: 0;
+}
+
+.book-now-note {
+  font-size: 12px;
+  color: #888;
+  margin: 0;
+  line-height: 1.5;
+}
