@@ -512,19 +512,101 @@ a {
 
   .grid-3 {
     grid-template-columns: 1fr;
+    gap: 20px;
   }
 
   .footer-grid {
     grid-template-columns: 1fr;
+    gap: 30px;
   }
 
   .banner-content {
-    left: 7%;
-    top: 48%;
+    left: 5%;
+    top: 50%;
+    transform: translateY(-40%);
+    max-width: 90%;
   }
 
   .banner-content h2 {
-    font-size: 42px;
+    font-size: 38px;
+  }
+
+  .section {
+    padding: 50px 0;
+  }
+
+  .section-title {
+    font-size: 26px;
+  }
+}
+
+@media(max-width: 500px) {
+  .header {
+    padding: 12px 0;
+  }
+
+  .logo {
+    width: 48px;
+    height: 48px;
+    font-size: 28px;
+    border-radius: 14px;
+  }
+
+  .brand-text h1 {
+    font-size: 18px;
+  }
+
+  .brand-text p {
+    font-size: 11px;
+  }
+
+  .category-bar.inside-banner {
+    padding: 6px 0;
+  }
+
+  .category-wrapper {
+    gap: 8px;
+  }
+
+  .category-item {
+    padding: 8px 14px;
+    font-size: 12px;
+    gap: 6px;
+  }
+
+  .banner-content {
+    top: 55%;
+  }
+
+  .banner-content h2 {
+    font-size: 28px;
+  }
+
+  .banner-content p {
+    font-size: 15px;
+    margin-top: 10px;
+  }
+
+  .banner-content .btn {
+    margin-top: 18px;
+    padding: 10px 20px;
+  }
+
+  .section {
+    padding: 40px 0;
+  }
+
+  .grid-3 {
+    margin-top: 25px;
+  }
+
+  .feature, .category-card {
+    padding: 20px;
+  }
+
+  .nav-actions .btn {
+    padding: 6px 10px;
+    font-size: 11px;
   }
 }
 
