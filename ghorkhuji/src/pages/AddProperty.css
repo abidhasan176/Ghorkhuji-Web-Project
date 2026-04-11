@@ -161,21 +161,61 @@ border-radius:10px;
 }
 
 @media(max-width:768px){
+  .add-property-page {
+    padding: 24px 12px;
+  }
 
-.grid-3{
-grid-template-columns:1fr;
+  h1 {
+    font-size: 32px;
+    margin-bottom: 18px;
+  }
+
+  .form-section {
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .form-section h2 {
+    font-size: 20px;
+    margin-bottom: 18px;
+  }
+
+  .grid-3, .grid-2 {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .full {
+    grid-column: auto;
+  }
+
+  .buttons {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .create-btn, .cancel-btn {
+    width: 100%;
+    text-align: center;
+  }
 }
 
-.grid-2{
-grid-template-columns:1fr;
-}
+@media(max-width: 500px) {
+  h1 {
+    font-size: 26px;
+  }
 
-.full{
-grid-column:auto;
-}
+  .info-box {
+    padding: 15px;
+    font-size: 14px;
+  }
 
-h1{
-font-size:36px;
-}
+  input, select, textarea {
+    padding: 10px;
+    font-size: 14px;
+  }
 
+  .upload-box {
+    padding: 20px;
+  }
 }

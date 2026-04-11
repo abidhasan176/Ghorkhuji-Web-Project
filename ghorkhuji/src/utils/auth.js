@@ -5,6 +5,8 @@ export const getToken = () => {
   return match ? match.split("=")[1] : null;
 };
 
+export const isLoggedIn = () => !!getToken();
+
 export const saveAuth = (token, user) => {
   if (user) {
     localStorage.setItem("user", JSON.stringify(user));
@@ -21,15 +23,12 @@ export const getUser = () => {
 
 export const logoutUser = async () => {
   try {
-    // Server must clear the httpOnly token cookie — JS alone cannot
     await fetch("http://localhost:5000/api/auth/logout", {
       method: "POST",
       credentials: "include",
-    });
-  } catch (err) {
-    console.warn("Logout request failed:", err);
-  }
-  // Clear local state regardless
+    }).catch(() => {});
+  } catch (err) {}
+
   localStorage.removeItem("user");
   document.cookie = "auth=; path=/; max-age=0; SameSite=Lax";
 };

@@ -29,6 +29,7 @@ const INITIAL_VISIBLE = 6; // 2 rows × 3 cols
 export default function AccessibleHome() {
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState("All");
+  const [sortBy, setBySort] = useState("newest");
 
   // Properties state
   const [properties, setProperties] = useState([]);
@@ -158,15 +159,25 @@ export default function AccessibleHome() {
   };
 
   // Filtered lists by category
-  const filteredProperties =
+  const filteredProperties = (
     activeCategory === "All"
       ? properties
-      : properties.filter((p) => p.category?.toLowerCase() === activeCategory.toLowerCase());
+      : properties.filter((p) => p.category?.toLowerCase() === activeCategory.toLowerCase())
+  ).sort((a, b) => {
+    if (sortBy === "price-low") return Number(a.price) - Number(b.price);
+    if (sortBy === "price-high") return Number(b.price) - Number(a.price);
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
 
-  const filteredOrders =
+  const filteredOrders = (
     activeCategory === "All"
       ? orders
-      : orders.filter((o) => o.category?.toLowerCase() === activeCategory.toLowerCase());
+      : orders.filter((o) => o.category?.toLowerCase() === activeCategory.toLowerCase())
+  ).sort((a, b) => {
+    if (sortBy === "price-low") return Number(a.maxBudget) - Number(b.maxBudget);
+    if (sortBy === "price-high") return Number(b.maxBudget) - Number(a.maxBudget);
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
 
   // Sliced lists for display
   const visibleProperties = showAllProperties
@@ -188,72 +199,70 @@ export default function AccessibleHome() {
     <div className="page">
       {/* ── Header ── */}
       <header className="header">
-        <div className="container nav">
-          <div className="brand">
-            <div className="logo">🏠</div>
-            <div className="brand-text">
-              <h1>GhorKhuji</h1>
-              <p>Find home easily</p>
+        <div className="container header-container">
+          {/* Row 1: Brand, Menu, Actions */}
+          <div className="header-row-1">
+            <div className="brand" onClick={() => navigate("/accessible-home")} style={{ cursor: "pointer" }}>
+              <div className="logo">🏠</div>
+              <div className="brand-text">
+                <h1>GhorKhuji</h1>
+                <p>Find home easily</p>
+              </div>
+            </div>
+
+            <nav className="menu">
+              <a href="#home">Home</a>
+              <a href="#properties">Property list</a>
+              <a href="#orders">Looking For</a>
+              <a href="#footer">Contact</a>
+            </nav>
+
+            <div className="nav-actions">
+              {!getToken() ? (
+                <>
+                  <button type="button" className="top-action-btn" onClick={() => navigate("/login")}>
+                    <span>Login</span>
+                  </button>
+                  <button type="button" className="top-action-btn accent" onClick={() => navigate("/register")}>
+                    <span>Register</span>
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button className="iconBtn" onClick={() => navigate("/saved-properties")} title="Saved Properties">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                  </button>
+                  <button className="iconBtn" style={{ position: "relative" }} onClick={() => navigate("/chat")} title="Messages">
+                    💬
+                    {unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}
+                  </button>
+                  <button className="iconBtn" onClick={() => navigate("/profile")} title="Profile">
+                    👤
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
-          <nav className="menu">
-            <a href="#home">Home</a>
-            <a href="#properties">Property list</a>
-            <a href="#orders">Looking For</a>
-            <a href="#footer">Contact</a>
-          </nav>
-
-          <div className="nav-actions">
-            {!getToken() ? (
-              <>
-                <button type="button" className="top-action-btn" onClick={() => navigate("/login")}>
-                  <span>Login</span>
-                </button>
-                <button type="button" className="top-action-btn" style={{ background: "#818cf8", borderColor: "#818cf8" }} onClick={() => navigate("/register")}>
-                  <span>Register</span>
-                </button>
-              </>
-            ) : (
-              <>
-                <button className="top-action-btn" onClick={() => navigate("/search")}>
-                  <span className="top-action-icon">🔍</span>
-                  <span>Search</span>
-                </button>
-                <button className="top-action-btn" onClick={() => navigate("/add-property")}>
-                  <span className="top-action-icon">＋</span>
-                  <span>Add Property</span>
-                </button>
-                <button className="top-action-btn" onClick={() => navigate("/order-home")}>
-                  <span className="top-action-icon">⌂</span>
-                  <span>Order Home</span>
-                </button>
-                <button className="iconBtn" onClick={() => navigate("/saved-properties")} title="Saved Properties" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="white" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                  </svg>
-                </button>
-                <button className="iconBtn" style={{ position: 'relative' }} onClick={() => navigate("/chat")} title="Messages">
-                  💬
-                  {unreadCount > 0 && (
-                    <span style={{
-                      position: 'absolute', top: '-5px', right: '-5px',
-                      background: 'red', color: 'white', fontSize: '10px',
-                      fontWeight: 'bold', padding: '2px 6px', borderRadius: '10px'
-                    }}>
-                      {unreadCount}
-                    </span>
-                  )}
-                </button>
-                <button className="iconBtn" onClick={() => navigate("/profile")} title="Profile">
-                  👤
-                </button>
-                <button className="btn btn-dark" onClick={handleLogout}>
-                  Logout
-                </button>
-              </>
-            )}
-          </div>
+          {/* Row 2: Secondary Actions (only when logged in) */}
+          {getToken() && (
+            <div className="header-row-2">
+              <button className="top-action-btn" onClick={() => navigate("/search")}>
+                <span className="top-action-icon">🔍</span>
+                <span>Search</span>
+              </button>
+              <button className="top-action-btn" onClick={() => navigate("/add-property")}>
+                <span className="top-action-icon">＋</span>
+                <span>Add Property</span>
+              </button>
+              <button className="top-action-btn" onClick={() => navigate("/order-home")}>
+                <span className="top-action-icon">⌂</span>
+                <span>Order Home</span>
+              </button>
+            </div>
+          )}
         </div>
       </header>
 
@@ -307,17 +316,36 @@ export default function AccessibleHome() {
                   : `Showing ${activeCategory.toLowerCase()} listings.`}
               </p>
             </div>
-            {activeCategory !== "All" && (
-              <button className="clear-filter-btn" onClick={() => handleCategoryChange("All")}>
-                ✕ Clear Filter
-              </button>
-            )}
+            <div className="nav-actions" style={{ marginLeft: "auto" }}>
+              <div className="sort-select-wrapper">
+                <select 
+                  className="sort-select" 
+                  value={sortBy} 
+                  onChange={(e) => setBySort(e.target.value)}
+                >
+                  <option value="newest">Newest First</option>
+                  <option value="price-low">Price: Low to High</option>
+                  <option value="price-high">Price: High to Low</option>
+                </select>
+              </div>
+              {activeCategory !== "All" && (
+                <button className="clear-filter-btn" onClick={() => handleCategoryChange("All")}>
+                  ✕ Clear
+                </button>
+              )}
+            </div>
           </div>
 
           {propertiesLoading && (
-            <div className="state-box">
-              <div className="spinner"></div>
-              <p>Loading properties...</p>
+            <div className="grid-3">
+              {[1, 2, 3, 4, 5, 6].map(i => (
+                <div className="skeleton-card" key={i}>
+                  <div className="skeleton skeleton-img"></div>
+                  <div className="skeleton skeleton-title"></div>
+                  <div className="skeleton skeleton-text"></div>
+                  <div className="skeleton skeleton-btn"></div>
+                </div>
+              ))}
             </div>
           )}
 
@@ -329,11 +357,12 @@ export default function AccessibleHome() {
           )}
 
           {!propertiesLoading && !propertiesError && filteredProperties.length === 0 && (
-            <div className="state-box state-empty">
-              <span className="state-icon">🏚️</span>
-              <p>No properties found{activeCategory !== "All" ? ` in ${activeCategory} category` : ""}.</p>
-              <button className="btn btn-dark" onClick={() => navigate("/add-property")}>
-                + Add First Property
+            <div className="state-empty reveal reveal-up">
+              <span style={{ fontSize: "64px", display: "block", marginBottom: "20px" }}>🏚️</span>
+              <p>No properties found</p>
+              <span>Try adjusting your category or resetting the filter.</span>
+              <button className="btn btn-dark" onClick={() => handleCategoryChange("All")}>
+                Clear Filter
               </button>
             </div>
           )}
@@ -348,6 +377,7 @@ export default function AccessibleHome() {
                     
                     <button 
                       onClick={() => handleToggleSave(item._id)}
+                      className={isSaved ? "fav-pop" : ""}
                       style={{
                         position: "absolute", top: "12px", right: "12px", zIndex: 10,
                         background: "#fff", border: "none", borderRadius: "50%",
@@ -358,7 +388,7 @@ export default function AccessibleHome() {
                       }}
                       title={isSaved ? "Remove from saved" : "Save this property"}
                     >
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill={isSaved ? "white" : "transparent"} stroke={isSaved ? "black" : "#94a3b8"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill={isSaved ? "#ef4444" : "transparent"} stroke={isSaved ? "#ef4444" : "#94a3b8"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                       </svg>
                     </button>
@@ -435,17 +465,31 @@ export default function AccessibleHome() {
                 Tenants actively searching for a place to rent.
               </p>
             </div>
-            {activeCategory !== "All" && (
-              <button className="clear-filter-btn" onClick={() => handleCategoryChange("All")}>
-                ✕ Clear Filter
-              </button>
-            )}
+            <div className="nav-actions" style={{ marginLeft: "auto" }}>
+              <div className="sort-select-wrapper">
+                <select className="sort-select" value={sortBy} onChange={(e) => setBySort(e.target.value)}>
+                  <option value="newest">Newest First</option>
+                  <option value="price-low">Budget: Low to High</option>
+                  <option value="price-high">Budget: High to Low</option>
+                </select>
+              </div>
+              {activeCategory !== "All" && (
+                <button className="clear-filter-btn" onClick={() => handleCategoryChange("All")}>
+                  ✕ Clear
+                </button>
+              )}
+            </div>
           </div>
 
           {ordersLoading && (
-            <div className="state-box">
-              <div className="spinner"></div>
-              <p>Loading requests...</p>
+            <div className="grid-3">
+              {[1, 2, 3].map(i => (
+                <div className="skeleton-card" key={i} style={{ height: "300px" }}>
+                  <div className="skeleton skeleton-title"></div>
+                  <div className="skeleton skeleton-text"></div>
+                  <div className="skeleton skeleton-btn"></div>
+                </div>
+              ))}
             </div>
           )}
 
@@ -537,21 +581,46 @@ export default function AccessibleHome() {
       <footer className="footer" id="footer">
         <div className="container footer-grid">
           <div>
-            <h3>GhorKhuji</h3>
-            <p className="footer-muted">Simple house rent solution for everyone.</p>
+            <div className="brand" style={{ marginBottom: "16px" }}>
+              <div className="logo" style={{ width: "40px", height: "40px", fontSize: "24px" }}>🏠</div>
+              <div className="brand-text">
+                <h1 style={{ fontSize: "18px" }}>GhorKhuji</h1>
+              </div>
+            </div>
+            <p className="footer-muted" style={{ maxWidth: "300px", lineHeight: "1.6" }}>
+              The most reliable platform to find and list rental properties in Bangladesh. Simple, fast, and secure.
+            </p>
           </div>
           <div>
             <h3>Quick Links</h3>
             <a href="#home">Home</a>
             <a href="#properties">Properties</a>
             <a href="#orders">Looking For</a>
+            <a href="/profile">My Profile</a>
           </div>
           <div>
-            <h3>Contact</h3>
-            <p className="footer-muted">Dhaka, Bangladesh</p>
+            <h3>Categories</h3>
+            {categories.slice(1, 5).map(cat => (
+              <a key={cat} href="#properties" onClick={() => handleCategoryChange(cat)}>{cat}</a>
+            ))}
+          </div>
+          <div>
+            <h3>Support</h3>
+            <p className="footer-muted">Email: info@ghorkhuji.com</p>
+            <p className="footer-muted">Phone: +880 1700-000000</p>
+            <div style={{ display: "flex", gap: "12px", marginTop: "16px" }}>
+              <span style={{ fontSize: "20px", cursor: "pointer" }}>🌐</span>
+              <span style={{ fontSize: "20px", cursor: "pointer" }}>📱</span>
+              <span style={{ fontSize: "20px", cursor: "pointer" }}>📧</span>
+            </div>
           </div>
         </div>
-        <p className="copyright">© 2026 GhorKhuji. All rights reserved.</p>
+        <div className="container">
+          <hr style={{ border: "none", borderTop: "1px solid rgba(255,255,255,0.1)", margin: "32px 0 24px" }} />
+          <p className="copyright" style={{ marginTop: "0" }}>
+            © {new Date().getFullYear()} GhorKhuji. Built with ❤️ in Bangladesh.
+          </p>
+        </div>
       </footer>
     </div>
   );

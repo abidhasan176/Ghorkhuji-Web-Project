@@ -1,4 +1,6 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { getToken, logoutUser } from "./utils/auth";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -13,9 +15,25 @@ import SavedProperties from "./pages/SavedProperties";
 import SearchProperties from "./pages/SearchProperties";
 import Chat from "./pages/Chat";
 import ProtectedRoute from "./components/ProtectedRoute"; // Import ProtectedRoute
+import CarbonFootprintDisplay from "./components/CarbonFootprintDisplay";
 
 function App() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check auth on every navigation
+    if (location.pathname !== "/login" && location.pathname !== "/register" && location.pathname !== "/") {
+      if (!getToken()) {
+        logoutUser().then(() => {
+          navigate("/login");
+        });
+      }
+    }
+  }, [location, navigate]);
+
   return (
+    <>
     <Routes>
       {/* Public Routes */}
       <Route path="/" element={<Home />} />
@@ -112,6 +130,8 @@ function App() {
         }
       />
     </Routes>
+    <CarbonFootprintDisplay />
+    </>
   );
 }
 
