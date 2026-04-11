@@ -3,6 +3,7 @@ import SSLCommerzPayment from "sslcommerz-lts";
 import Transaction from "../models/TransactionModel.js";
 import Property from "../models/Property.js";
 import User from "../models/User.js";
+import { sendPaymentReceipt } from "../utils/emailService.js";
 
 // SSLCommerz configuration from environment variables
 const SSL_IS_LIVE = process.env.SSL_IS_LIVE === "true";
@@ -122,11 +123,26 @@ export const successPayment = async (req, res) => {
   try {
     const { tranId } = req.params;
 
-    // Update transaction status to 'success'
-    await Transaction.findOneAndUpdate(
+    // Update transaction status to 'success', and populate to get info for email
+    const updatedTx = await Transaction.findOneAndUpdate(
       { transactionId: tranId },
-      { status: "success" }
-    );
+      { status: "success" },
+      { new: true } // Return the updated document
+    ).populate("userId").populate("propertyId");
+
+    // Attempt to send email receipt in background
+    if (updatedTx && updatedTx.userId && updatedTx.propertyId) {
+      const receiptData = {
+        userName: updatedTx.userId.name || "Customer",
+        transactionId: updatedTx.transactionId,
+        amount: updatedTx.amount,
+        propertyAddress: updatedTx.propertyId.shortAddress || "GhorKhuji Property",
+        date: new Date().toLocaleDateString()
+      };
+      
+      // We don't await this so it doesn't block the webhook response
+      sendPaymentReceipt(updatedTx.userId.email || "test@example.com", receiptData);
+    }
 
     // Redirect user to the frontend success page using JS to prevent cross-site POST cookie drop
     return res.send(`<html><body><script>window.location.href="${CLIENT_URL}/payment-success";</script></body></html>`);

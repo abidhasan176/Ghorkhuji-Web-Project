@@ -15,6 +15,7 @@ import propertyRoutes from "./routes/propertyRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 import http from "http";
 import { Server } from "socket.io";
 
@@ -76,6 +77,7 @@ app.use("/api/properties", propertyRoutes);    // Property routes
 app.use("/api/orders", orderRoutes);            // Order routes
 app.use("/api/messages", messageRoutes);        // Message routes
 app.use("/api/payment", paymentRoutes);         // Payment routes
+app.use("/api/admin", adminRoutes);             // Admin Analytics routes
 
 // Socket.io setup
 const server = http.createServer(app);

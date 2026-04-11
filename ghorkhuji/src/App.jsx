@@ -16,6 +16,7 @@ import ProtectedRoute from "./components/ProtectedRoute"; // Import ProtectedRou
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentFail from "./pages/PaymentFail";
 import PaymentCancel from "./pages/PaymentCancel";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function App() {
   return (
@@ -111,6 +112,15 @@ function App() {
         element={
           <ProtectedRoute>
             <Chat />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute>
+            <AdminDashboard />
           </ProtectedRoute>
         }
       />

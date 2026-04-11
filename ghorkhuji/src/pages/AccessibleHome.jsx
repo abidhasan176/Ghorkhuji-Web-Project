@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./accessibleHome.css";
-import { clearAuth, getToken } from "../utils/auth";
+import { clearAuth, getToken, getUser } from "../utils/auth";
 
 const categories = ["All", "Family", "Bachelor", "Office", "Sublet", "Hostel", "Shop"];
 
@@ -29,6 +29,9 @@ const INITIAL_VISIBLE = 6; // 2 rows × 3 cols
 export default function AccessibleHome() {
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState("All");
+  
+  // Get current user to check role
+  const currentUser = getUser();
 
   // Properties state
   const [properties, setProperties] = useState([]);
@@ -248,6 +251,11 @@ export default function AccessibleHome() {
                 <button className="iconBtn" onClick={() => navigate("/profile")} title="Profile">
                   👤
                 </button>
+                {currentUser?.role === "admin" && (
+                  <button className="btn btn-dark" style={{ background: "#4f46e5", borderColor: "#4f46e5" }} onClick={() => navigate("/admin")} title="Admin Dashboard">
+                    📊 Admin Panel
+                  </button>
+                )}
                 <button className="btn btn-dark" onClick={handleLogout}>
                   Logout
                 </button>
