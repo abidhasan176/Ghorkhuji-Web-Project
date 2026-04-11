@@ -15,6 +15,7 @@ import SavedProperties from "./pages/SavedProperties";
 import SearchProperties from "./pages/SearchProperties";
 import Chat from "./pages/Chat";
 import ProtectedRoute from "./components/ProtectedRoute"; // Import ProtectedRoute
+import CarbonFootprintDisplay from "./components/CarbonFootprintDisplay";
 
 function App() {
   const location = useLocation();
@@ -32,6 +33,7 @@ function App() {
   }, [location, navigate]);
 
   return (
+    <>
     <Routes>
       {/* Public Routes */}
       <Route path="/" element={<Home />} />
@@ -128,6 +130,8 @@ function App() {
         }
       />
     </Routes>
+    <CarbonFootprintDisplay />
+    </>
   );
 }
 
