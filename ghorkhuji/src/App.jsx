@@ -15,10 +15,7 @@ import SavedProperties from "./pages/SavedProperties";
 import SearchProperties from "./pages/SearchProperties";
 import Chat from "./pages/Chat";
 import ProtectedRoute from "./components/ProtectedRoute"; // Import ProtectedRoute
-import PaymentSuccess from "./pages/PaymentSuccess";
-import PaymentFail from "./pages/PaymentFail";
-import PaymentCancel from "./pages/PaymentCancel";
-import AdminDashboard from "./pages/AdminDashboard";
+import CarbonFootprintDisplay from "./components/CarbonFootprintDisplay";
 
 function App() {
   const location = useLocation();
@@ -36,6 +33,7 @@ function App() {
   }, [location, navigate]);
 
   return (
+    <>
     <Routes>
       {/* Public Routes */}
       <Route path="/" element={<Home />} />
@@ -146,6 +144,8 @@ function App() {
       <Route path="/payment-fail" element={<PaymentFail />} />
       <Route path="/payment-cancel" element={<PaymentCancel />} />
     </Routes>
+    <CarbonFootprintDisplay />
+    </>
   );
 }
 
