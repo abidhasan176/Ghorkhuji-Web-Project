@@ -141,7 +141,36 @@ router.get("/me", authMiddleware, async (req, res) => {
       },
     });
   } catch (err) {
-    console.log("/me error:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+});
+
+// UPDATE PROFILE
+router.put("/update", authMiddleware, async (req, res) => {
+  try {
+    const { name } = req.body;
+    if (!name?.trim()) {
+      return res.status(400).json({ message: "Name is required" });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { name: name.trim() },
+      { new: true, select: "-password" }
+    );
+
+    return res.json({
+      message: "Profile updated successfully ✅",
+      user: {
+        id: user._id,
+        name: user.name,
+        phone: user.phone,
+        countryCode: user.countryCode,
+        referral: user.referral,
+      },
+    });
+  } catch (err) {
+    console.log("Update error:", err);
     return res.status(500).json({ message: "Server error" });
   }
 });
