@@ -129,6 +129,20 @@ function App() {
           </ProtectedRoute>
         }
       />
+
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute>
+            <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Payment Gateway Routes */}
+      <Route path="/payment-success" element={<PaymentSuccess />} />
+      <Route path="/payment-fail" element={<PaymentFail />} />
+      <Route path="/payment-cancel" element={<PaymentCancel />} />
     </Routes>
     <CarbonFootprintDisplay />
     </>
