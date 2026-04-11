@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import BookNowButton from "../components/BookNowButton";
 import "./PropertyDetails.css";
 
 const categoryIcons = {
@@ -343,6 +344,10 @@ export default function PropertyDetails() {
                   >
                     💬 Chat with Owner
                   </button>
+                  {/* Payment integration: BookNowButton */}
+                  <div style={{ marginTop: '16px' }}>
+                    <BookNowButton propertyId={property._id} propertyAddress={property.shortAddress} />
+                  </div>
                 </div>
               </div>
             </div>

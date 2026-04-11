@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./accessibleHome.css";
-import { clearAuth, getToken } from "../utils/auth";
+import { clearAuth, getToken, getUser } from "../utils/auth";
 
 const categories = ["All", "Family", "Bachelor", "Office", "Sublet", "Hostel", "Shop"];
 

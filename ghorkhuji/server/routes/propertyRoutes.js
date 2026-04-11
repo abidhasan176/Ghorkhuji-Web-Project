@@ -85,22 +85,56 @@ router.post("/", authMiddleware, upload.array("images", 5), async (req, res) => 
 });
 
 // ============================================================
-// GET /api/properties — সব property দেখা (Home page এ listing)
-// Public route — login ছাড়াও দেখা যাবে
+// GET /api/properties — সব property দেখা (Paginated)
+// ?page=1&limit=12 দিয়ে কন্ট্রোল করা যাবে
 // ============================================================
 router.get("/", async (req, res) => {
   try {
-    // সব active property নিয়ে আসো, newest first
-    const properties = await Property.find({ isActive: true })
-      .sort({ createdAt: -1 })
-      .populate("postedBy", "name phone"); // poster এর name আর phone দেখাবে
+    const page  = Math.max(1, Number(req.query.page)  || 1);
+    const limit = Math.min(50, Number(req.query.limit) || 12);
+    const skip  = (page - 1) * limit;
 
-    return res.status(200).json({ properties });
+    const [properties, total] = await Promise.all([
+      Property.find({ isActive: true })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate("postedBy", "name phone"),
+      Property.countDocuments({ isActive: true }),
+    ]);
+
+    return res.status(200).json({
+      properties,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+        hasNextPage: page < Math.ceil(total / limit),
+      },
+    });
   } catch (err) {
     console.log("❌ Get properties error:", err.message);
     return res.status(500).json({ message: "Server error" });
   }
 });
+
+// ============================================================
+// GET /api/properties/my — নিজের সব property দেখা
+// শুধু logged-in user এর property দেখা যাবে
+// ============================================================
+router.get("/my", authMiddleware, async (req, res) => {
+  try {
+    const properties = await Property.find({ postedBy: req.user._id })
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({ properties });
+  } catch (err) {
+    console.log("❌ Get my properties error:", err.message);
+    return res.status(500).json({ message: "Server error" });
+  }
+});
+
 
 // ============================================================
 // GET /api/properties/search —property search
@@ -183,6 +217,45 @@ router.delete("/:id", authMiddleware, async (req, res) => {
     return res.status(200).json({ message: "Property deleted successfully" });
   } catch (err) {
     console.log("❌ Delete property error:", err.message);
+    return res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ============================================================
+// PATCH /api/properties/:id — নিজের property আপডেট করা
+// শুধু যে post করেছে সে edit করতে পারবে
+// ============================================================
+router.patch("/:id", authMiddleware, async (req, res) => {
+  try {
+    const property = await Property.findById(req.params.id);
+
+    if (!property) {
+      return res.status(404).json({ message: "Property not found" });
+    }
+
+    if (property.postedBy.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    // শুধু allowed fields গুলোই update হবে
+    const allowedFields = [
+      "month", "category", "propertyType", "bedroom", "bathroom",
+      "balcony", "floor", "gender", "size", "details", "price",
+      "priceType", "shortAddress", "isActive",
+      "includesElectricity", "includesGas", "includesWater",
+      "includesLift", "includesSecurity", "includesServant", "includesNet",
+    ];
+
+    allowedFields.forEach((field) => {
+      if (req.body[field] !== undefined) {
+        property[field] = req.body[field];
+      }
+    });
+
+    await property.save();
+    return res.status(200).json({ message: "Property updated ✅", property });
+  } catch (err) {
+    console.log("❌ Update property error:", err.message);
     return res.status(500).json({ message: "Server error" });
   }
 });

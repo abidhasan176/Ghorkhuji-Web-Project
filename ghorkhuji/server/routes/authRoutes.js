@@ -61,6 +61,7 @@ router.post("/register", async (req, res) => {
         id: user._id,
         name: user.name,
         phone: user.phone,
+        role: user.role,
       },
     });
   } catch (err) {
@@ -117,6 +118,7 @@ router.post("/login", async (req, res) => {
         email: user.email,
         provider: user.provider,
         avatar: user.avatar,
+        role: user.role,
       },
     });
   } catch (err) {
@@ -135,6 +137,7 @@ router.get("/me", authMiddleware, async (req, res) => {
         phone: req.user.phone,
         countryCode: req.user.countryCode,
         referral: req.user.referral,
+        role: req.user.role,
       },
     });
   } catch (err) {
