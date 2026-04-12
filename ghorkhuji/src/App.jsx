@@ -16,6 +16,10 @@ import SearchProperties from "./pages/SearchProperties";
 import Chat from "./pages/Chat";
 import ProtectedRoute from "./components/ProtectedRoute"; // Import ProtectedRoute
 import CarbonFootprintDisplay from "./components/CarbonFootprintDisplay";
+import AdminDashboard from "./pages/AdminDashboard";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import PaymentFail from "./pages/PaymentFail";
+import PaymentCancel from "./pages/PaymentCancel";
 
 function App() {
   const location = useLocation();
