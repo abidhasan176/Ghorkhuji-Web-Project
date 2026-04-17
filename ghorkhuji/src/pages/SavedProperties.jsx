@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiFetch } from "../utils/api";
 import "./accessibleHome.css"; // Reuse existing UI
 
 export default function SavedProperties() {
@@ -30,13 +31,11 @@ export default function SavedProperties() {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("http://localhost:5000/api/auth/saved-properties", {
-        credentials: "include",
-      });
+      const res = await apiFetch("http://localhost:5000/api/auth/saved-properties");
       const data = await res.json();
       if (res.ok) {
         setProperties(data.savedProperties || []);
-      } else {
+      } else if (res.status !== 401 && res.status !== 403) {
         setError(data.message || "Failed to load saved properties.");
       }
     } catch {
@@ -53,9 +52,8 @@ export default function SavedProperties() {
   // Remove property from saved list instantly locally
   const handleUnsave = async (propertyId) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/auth/saved-properties/${propertyId}`, {
+      const res = await apiFetch(`http://localhost:5000/api/auth/saved-properties/${propertyId}`, {
         method: "POST",
-        credentials: "include",
       });
       if (res.ok) {
         setProperties(prev => prev.filter(p => p._id !== propertyId));

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { apiFetch } from "../utils/api";
 import "./PropertyDetails.css"; // Reuse same base styles
 
 const categoryIcons = {
@@ -32,13 +33,11 @@ export default function OrderDetails() {
       setLoading(true);
       setError("");
       try {
-        const res = await fetch(`http://localhost:5000/api/orders/${id}`, {
-          credentials: "include",
-        });
+        const res = await apiFetch(`http://localhost:5000/api/orders/${id}`);
         const data = await res.json();
         if (res.ok) {
           setOrder(data.order);
-        } else {
+        } else if (res.status !== 401 && res.status !== 403) {
           setError(data.message || "Request not found.");
         }
       } catch {

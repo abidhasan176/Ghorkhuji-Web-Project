@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiFetch } from "../utils/api";
 import "./accessibleHome.css";
 
 const categories = ["All", "Family", "Bachelor", "Office", "Sublet", "Hostel", "Shop"];
@@ -41,9 +42,7 @@ export default function SearchProperties() {
     // Fetch saved properties on load to sync heart icons
     const fetchSaved = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/auth/saved-properties", {
-           credentials: "include" 
-        });
+        const res = await apiFetch("http://localhost:5000/api/auth/saved-properties");
         if (res.ok) {
           const data = await res.json();
           const ids = data.savedProperties.map(p => p._id);
@@ -70,11 +69,11 @@ export default function SearchProperties() {
     if (maxBudget) params.append("maxBudget", maxBudget);
 
     try {
-      const res = await fetch(`http://localhost:5000/api/properties/search?${params.toString()}`);
+      const res = await apiFetch(`http://localhost:5000/api/properties/search?${params.toString()}`);
       const data = await res.json();
       if (res.ok) {
         setProperties(data.properties || []);
-      } else {
+      } else if (res.status !== 401 && res.status !== 403) {
         setError(data.message || "Failed to fetch properties");
       }
     } catch {
@@ -86,9 +85,8 @@ export default function SearchProperties() {
 
   const handleToggleSave = async (propertyId) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/auth/saved-properties/${propertyId}`, {
+      const res = await apiFetch(`http://localhost:5000/api/auth/saved-properties/${propertyId}`, {
         method: "POST",
-        credentials: "include",
       });
       if (res.ok) {
         const data = await res.json();

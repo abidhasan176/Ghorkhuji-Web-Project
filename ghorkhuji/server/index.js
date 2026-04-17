@@ -15,6 +15,8 @@ import propertyRoutes from "./routes/propertyRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import carbonRoutes from "./routes/carbonRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 import http from "http";
 import { Server } from "socket.io";
 import { co2 } from "@tgwf/co2";
@@ -138,6 +140,8 @@ app.use("/api/properties", propertyRoutes); // Property routes (AddProperty form
 app.use("/api/orders", orderRoutes);         // Order routes (OrderHome form)
 app.use("/api/messages", messageRoutes);     // Message routes (Chat feature)
 app.use("/api/carbon-log", carbonRoutes);    // Carbon footprint tracking logs
+app.use("/api/payment", paymentRoutes);      // SSLCommerz payment routes
+app.use("/api/admin", adminRoutes);          // Admin dashboard analytics routes
 
 // Socket.io setup
 const server = http.createServer(app);

@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as LineTooltip, ResponsiveContainer, BarChart, Bar, Legend } from "recharts";
 import "./AdminDashboard.css";
-import { getToken } from "../utils/auth";
 import { useNavigate } from "react-router-dom";
+import { apiFetch } from "../utils/api";
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
@@ -12,21 +12,12 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     const fetchStats = async () => {
-      const token = getToken();
-      if (!token) {
-        navigate("/login");
-        return;
-      }
-      
       try {
-        const res = await fetch("http://localhost:5000/api/admin/dashboard-stats", {
-          credentials: "include"
-        });
-        
+        const res = await apiFetch("http://localhost:5000/api/admin/dashboard-stats");
         if (res.ok) {
           const data = await res.json();
           setStats(data);
-        } else {
+        } else if (res.status !== 401 && res.status !== 403) {
           setError("Failed to load dashboard data. Are you an admin?");
         }
       } catch (err) {
@@ -35,7 +26,6 @@ const AdminDashboard = () => {
         setLoading(false);
       }
     };
-
     fetchStats();
   }, [navigate]);
 
