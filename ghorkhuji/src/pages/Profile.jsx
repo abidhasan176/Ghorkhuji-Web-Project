@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { clearAuth, getToken } from "../utils/auth";
+import { clearAuth } from "../utils/auth";
+import { apiFetch } from "../utils/api";
 import "./Profile.css";
 
 export default function Profile() {
@@ -14,22 +15,18 @@ export default function Profile() {
   useEffect(() => {
     const fetchMe = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/auth/me", {
-          credentials: "include",
-        });
+        const res = await apiFetch("http://localhost:5000/api/auth/me");
         if (res.ok) {
           const data = await res.json();
           setUser(data.user);
           setEditName(data.user.name);
           localStorage.setItem("user", JSON.stringify(data.user));
-        } else {
-          // If fetch fails, try local storage
-          const localUser = JSON.parse(localStorage.getItem("user"));
-          if (localUser) {
-            setUser(localUser);
-            setEditName(localUser.name);
-          }
+        } else if (res.status !== 401 && res.status !== 403) {
+          // Non-auth error: fall back to cached data
+          const localUser = JSON.parse(localStorage.getItem("user") || "null");
+          if (localUser) { setUser(localUser); setEditName(localUser.name); }
         }
+        // 401/403 is handled by apiFetch → auto-redirect to /login
       } catch (err) {
         console.log("Error fetching user info:", err);
       }
@@ -45,11 +42,9 @@ export default function Profile() {
     setError("");
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/update", {
+      const res = await apiFetch("http://localhost:5000/api/auth/update", {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: editName.trim() }),
-        credentials: "include",
       });
 
       if (res.ok) {

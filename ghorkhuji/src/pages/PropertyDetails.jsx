@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { apiFetch } from "../utils/api";
 import BookNowButton from "../components/BookNowButton";
 import "./PropertyDetails.css";
 
@@ -36,14 +37,14 @@ export default function PropertyDetails() {
       setError("");
       try {
         const [propRes, savedRes] = await Promise.all([
-          fetch(`http://localhost:5000/api/properties/${id}`, { credentials: "include" }),
-          fetch("http://localhost:5000/api/auth/saved-properties", { credentials: "include" }),
+          apiFetch(`http://localhost:5000/api/properties/${id}`),
+          apiFetch("http://localhost:5000/api/auth/saved-properties"),
         ]);
 
         if (propRes.ok) {
           const data = await propRes.json();
           setProperty(data.property);
-        } else {
+        } else if (propRes.status !== 401 && propRes.status !== 403) {
           const data = await propRes.json();
           setError(data.message || "Property not found.");
         }
@@ -65,9 +66,8 @@ export default function PropertyDetails() {
 
   const handleToggleSave = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/auth/saved-properties/${id}`, {
+      const res = await apiFetch(`http://localhost:5000/api/auth/saved-properties/${id}`, {
          method: "POST",
-         credentials: "include"
       });
       if (res.ok) {
         const data = await res.json();
