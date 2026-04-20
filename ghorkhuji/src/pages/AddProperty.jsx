@@ -1,8 +1,9 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiFetch } from "../utils/api";
 import "./AddProperty.css";
 
-// লাল * চিহ্ন দেখানোর জন্য ছোট কম্পোনেন্ট
+// à¦²à¦¾à¦² * à¦šà¦¿à¦¹à§à¦¨ à¦¦à§‡à¦–à¦¾à¦¨à§‹à¦° à¦œà¦¨à§à¦¯ à¦›à§‹à¦Ÿ à¦•à¦®à§à¦ªà§‹à¦¨à§‡à¦¨à§à¦Ÿ
 const Req = () => <span style={{ color: "red" }}> *</span>;
 
 export default function AddProperty() {
@@ -50,35 +51,34 @@ export default function AddProperty() {
     setLoading(true);
     setMessage({ text: "", ok: true });
 
-    // FormData তৈরি করা হচ্ছে কারণ ছবির ফাইল শুধু JSON-এ পাঠানো যায় না
+    // FormData à¦¤à§ˆà¦°à¦¿ à¦•à¦°à¦¾ à¦¹à¦šà§à¦›à§‡ à¦•à¦¾à¦°à¦£ à¦›à¦¬à¦¿à¦° à¦«à¦¾à¦‡à¦² à¦¶à§à¦§à§ JSON-à¦ à¦ªà¦¾à¦ à¦¾à¦¨à§‹ à¦¯à¦¾à§Ÿ à¦¨à¦¾
     const formData = new FormData();
     Object.keys(form).forEach((key) => {
       formData.append(key, form[key]);
     });
     
-    // Multiple Images Append করা হচ্ছে
+    // Multiple Images Append à¦•à¦°à¦¾ à¦¹à¦šà§à¦›à§‡
     images.forEach((image) => {
       formData.append("images", image);
     });
 
     try {
-      const res = await fetch("http://localhost:5000/api/properties", {
+      // FormData: must NOT set Content-Type header (browser sets it with boundary)
+      const res = await apiFetch("http://localhost:5000/api/properties", {
         method: "POST",
-        credentials: "include",
-        // Content-Type header দেওয়া যাবে না, FormData সেটা নিজে ঠিক করে নেয়
+        headers: {},
         body: formData,
       });
-
       const data = await res.json();
 
       if (res.ok) {
-        setMessage({ text: "✅ Property posted successfully!", ok: true });
+        setMessage({ text: "âœ… Property posted successfully!", ok: true });
         setTimeout(() => navigate("/accessible-home"), 1500);
       } else {
-        setMessage({ text: "❌ " + (data.message || "Something went wrong"), ok: false });
+        setMessage({ text: "âŒ " + (data.message || "Something went wrong"), ok: false });
       }
     } catch (err) {
-      setMessage({ text: "❌ Server error. Make sure the server is running.", ok: false });
+      setMessage({ text: "âŒ Server error. Make sure the server is running.", ok: false });
     } finally {
       setLoading(false);
     }
@@ -92,7 +92,7 @@ export default function AddProperty() {
         <h1>Create Post</h1>
 
         <div className="info-box">
-          দ্রুত ভাড়াটিয়া পাওয়ার জন্য সঠিক তথ্য ও স্পষ্ট ছবি সংযুক্ত করে ফর্মটি পূরণ করুন।
+          à¦¦à§à¦°à§à¦¤ à¦­à¦¾à¦¡à¦¼à¦¾à¦Ÿà¦¿à¦¯à¦¼à¦¾ à¦ªà¦¾à¦“à¦¯à¦¼à¦¾à¦° à¦œà¦¨à§à¦¯ à¦¸à¦ à¦¿à¦• à¦¤à¦¥à§à¦¯ à¦“ à¦¸à§à¦ªà¦·à§à¦Ÿ à¦›à¦¬à¦¿ à¦¸à¦‚à¦¯à§à¦•à§à¦¤ à¦•à¦°à§‡ à¦«à¦°à§à¦®à¦Ÿà¦¿ à¦ªà§‚à¦°à¦£ à¦•à¦°à§à¦¨à¥¤
         </div>
 
         {message.text && (
@@ -335,7 +335,7 @@ export default function AddProperty() {
                 Security bill
               </div>
 
-              {/* Bachelor select করলে এই দুইটা extra option দেখাবে */}
+              {/* Bachelor select à¦•à¦°à¦²à§‡ à¦à¦‡ à¦¦à§à¦‡à¦Ÿà¦¾ extra option à¦¦à§‡à¦–à¦¾à¦¬à§‡ */}
               {form.category === "Bachelor" && (
                 <>
                   <div className="switch-row">

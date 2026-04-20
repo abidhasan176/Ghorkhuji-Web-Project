@@ -1,3 +1,10 @@
+/**
+ * Authentication helpers.
+ * - Token lives as an httpOnly "token" cookie (set by server).
+ * - "auth" cookie is a non-httpOnly flag readable by JS → used by ProtectedRoute.
+ * - User info lives in localStorage.
+ */
+
 export const getToken = () => {
   const match = document.cookie
     .split("; ")
@@ -7,9 +14,12 @@ export const getToken = () => {
 
 export const isLoggedIn = () => !!getToken();
 
+/** Called after a successful login to store user info. */
 export const saveAuth = (token, user) => {
   if (user) {
     localStorage.setItem("user", JSON.stringify(user));
+    if (user._id) localStorage.setItem("userId", user._id);
+    if (user.id)  localStorage.setItem("userId", user.id);
   }
 };
 
@@ -21,17 +31,27 @@ export const getUser = () => {
   }
 };
 
+/**
+ * Full logout:
+ * 1. Calls the backend logout route to clear the httpOnly cookie.
+ * 2. Clears all local storage items set by auth.
+ * 3. Clears the client-readable "auth" cookie.
+ */
 export const logoutUser = async () => {
   try {
     await fetch("http://localhost:5000/api/auth/logout", {
       method: "POST",
       credentials: "include",
     }).catch(() => {});
-  } catch (err) {}
+  } catch (_) {}
 
   localStorage.removeItem("user");
+  localStorage.removeItem("userId");
+  localStorage.removeItem("rememberedPhone");
+
+  // Clear the JS-readable flag cookie
   document.cookie = "auth=; path=/; max-age=0; SameSite=Lax";
 };
 
-// Keep clearAuth as an alias for backward compatibility
+// Backward-compat alias
 export const clearAuth = logoutUser;

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./accessibleHome.css";
 import { clearAuth, getToken, getUser } from "../utils/auth";
+import { apiFetch } from "../utils/api";
 
 const categories = ["All", "Family", "Bachelor", "Office", "Sublet", "Hostel", "Shop"];
 
@@ -56,12 +57,12 @@ export default function AccessibleHome() {
 
       const token = getToken();
       const promises = [
-        fetch("http://localhost:5000/api/properties", { credentials: "include" }),
-        fetch("http://localhost:5000/api/orders", { credentials: "include" }),
+        apiFetch("http://localhost:5000/api/properties"),
+        apiFetch("http://localhost:5000/api/orders"),
       ];
 
       if (token) {
-        promises.push(fetch("http://localhost:5000/api/auth/saved-properties", { credentials: "include" }));
+        promises.push(apiFetch("http://localhost:5000/api/auth/saved-properties"));
       }
 
       const results = await Promise.allSettled(promises);
@@ -116,7 +117,7 @@ export default function AccessibleHome() {
     if (getToken()) {
       const fetchUnread = async () => {
         try {
-          const res = await fetch("http://localhost:5000/api/messages/unread", { credentials: "include" });
+          const res = await apiFetch("http://localhost:5000/api/messages/unread");
           if (res.ok) {
             const data = await res.json();
             setUnreadCount(data.unreadCount || 0);
@@ -135,9 +136,8 @@ export default function AccessibleHome() {
   const handleToggleSave = async (propertyId) => {
     if (!getToken()) return navigate("/login");
     try {
-      const res = await fetch(`http://localhost:5000/api/auth/saved-properties/${propertyId}`, {
+      const res = await apiFetch(`http://localhost:5000/api/auth/saved-properties/${propertyId}`, {
          method: "POST",
-         credentials: "include"
       });
       if (res.ok) {
         const data = await res.json();

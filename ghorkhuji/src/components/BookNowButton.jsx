@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { apiFetch } from "../utils/api";
 import "./BookNowButton.css";
 
 // BookNowButton — PropertyDetails পেজে এই component ব্যবহার করুন
@@ -14,14 +15,10 @@ const BookNowButton = ({ propertyId, propertyAddress = "this property" }) => {
     setError("");
 
     try {
-      const response = await fetch(
+      const response = await apiFetch(
         `http://localhost:5000/api/payment/initiate/${propertyId}`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include", // Cookie (JWT) পাঠাবে
         }
       );
 

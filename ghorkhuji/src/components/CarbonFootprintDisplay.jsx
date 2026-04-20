@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useCarbonFootprint } from 'react-carbon-footprint';
 import { getUser } from '../utils/auth';
+import { apiFetch } from '../utils/api';
 
 const CarbonFootprintDisplay = () => {
     const [gCO2, bytesTransferred] = useCarbonFootprint();
@@ -27,11 +28,8 @@ const CarbonFootprintDisplay = () => {
             };
 
             const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-            fetch(`${backendUrl}/api/carbon-log`, {
+            apiFetch(`${backendUrl}/api/carbon-log`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
                 body: JSON.stringify(payload)
             }).then(() => {
                 lastSentRef.current = { bytes: currentBytes, co2: currentCo2 };

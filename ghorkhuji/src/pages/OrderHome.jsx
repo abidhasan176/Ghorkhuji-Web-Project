@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiFetch } from "../utils/api";
 import "./OrderHome.css";
 
 export default function OrderHome() {
@@ -46,10 +47,8 @@ export default function OrderHome() {
     setMessage({ text: "", ok: true });
 
     try {
-      const res = await fetch("http://localhost:5000/api/orders", {
+      const res = await apiFetch("http://localhost:5000/api/orders", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include", // cookie দিয়ে auth check হবে
         body: JSON.stringify({
           ...form,
           locations,

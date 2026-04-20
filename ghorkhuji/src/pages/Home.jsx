@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import "./Home.css";
 import bannerImage from "../assets/images/banner.png";
 import { getToken } from "../utils/auth";
+import { apiFetch } from "../utils/api";
 
 const categoryIcons = {
   All: "🏘️",
@@ -60,8 +61,8 @@ export default function Home() {
         setLoading(true);
         try {
           const [propRes, orderRes] = await Promise.all([
-            fetch("http://localhost:5000/api/properties", { credentials: "include" }),
-            fetch("http://localhost:5000/api/orders", { credentials: "include" }),
+            apiFetch("http://localhost:5000/api/properties"),
+            apiFetch("http://localhost:5000/api/orders"),
           ]);
           if (propRes.ok) {
             const propData = await propRes.json();
